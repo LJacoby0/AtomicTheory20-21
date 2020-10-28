@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD_SQUARED;
 import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
 class RemoteTeleOp extends OpMode {
