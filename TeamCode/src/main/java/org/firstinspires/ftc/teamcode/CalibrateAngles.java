@@ -20,7 +20,7 @@ class CalibrateAngles extends OpMode {
     boolean rightWasDown = false;
     boolean aWasDown = false;
     public double launchAngle = 0.5;
-    public double currentDistance = 60;
+    public int currentDistance = 60;
 
     @Override
     public void loop(){
