@@ -2,18 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 public class Target {
     private int x;
-    private int y;
+    private TargetType targetType;
 
     public int getX() {
         return x;
     }
 
-    public int getY() {
-        return y;
+    public TargetType getTargetType() {
+        return targetType;
     }
 
-    public Target(int x, int y) {
-        x = this.x;
-        y = this.y;
+    public Target(int x, TargetType targetType) {
+        this.x = x;
+        this.targetType = targetType;
     }
 }

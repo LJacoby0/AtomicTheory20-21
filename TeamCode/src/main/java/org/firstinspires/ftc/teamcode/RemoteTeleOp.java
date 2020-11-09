@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
 import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
+@TeleOp (name = "Remote TeleOp", group = "Remote")
 class RemoteTeleOp extends OpMode {
     private Robot rb = new Robot();
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
-        rb.init(hardwareMap, null);
+        rb.init(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
@@ -36,7 +38,6 @@ class RemoteTeleOp extends OpMode {
         } else {
             pow = DRIVE_POWER;
         }
-
         if (Math.abs(leftStickX) > DRIVE_STICK_THRESHOLD || Math.abs(leftStickY) > DRIVE_STICK_THRESHOLD || Math.abs(rightStickX) > DRIVE_STICK_THRESHOLD) {
             rb.drive(leftStickX, leftStickY, rightStickX, pow);
         } else {

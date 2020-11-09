@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 class Robot {
     //Declare motors
@@ -12,11 +12,8 @@ class Robot {
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
-    LinearOpMode opMode;
 
-    void init(HardwareMap hardwareMap, LinearOpMode opMode) {
-        this.opMode = opMode;
-
+    void init(HardwareMap hardwareMap) {
         // Initialize drive motors
         frontLeftMotor = hardwareMap.get(DcMotor.class, "fl");
         frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
@@ -34,7 +31,6 @@ class Robot {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 
     /**
@@ -56,5 +52,51 @@ class Robot {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
+    }
+    /*
+     This gets the distance from any given target using the odometry
+     It just uses the equation for the distance between two points
+     The values need to be updated to use odometry once it's working
+    */
+    public double getDistanceFromTarget (Target target){
+        double xDistance = 0;
+        double zDistance = 0;
+        return Math.hypot(xDistance, zDistance);
+    }
+    // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
+    public double getLaunchAngle( Target target) {
+        double distanceFromTarget = getDistanceFromTarget(target);
+        /*
+         Math.floor basically rounds down an integer. Both 6.1 and 6.8 would become 6.
+         To make this work, 61 and 68 need to become 6.1 and 6.8, so we divide by 10.
+        */
+        double roundedDownDistance = Math.floor(distanceFromTarget / 10.0) * 10;
+        // Same thing but the other way for Math.ceil
+        double roundedUpDistance = Math.ceil(distanceFromTarget / 10.0) * 10;
+        double launchAngleReal = 0;
+        /*
+         If the number is outside normal bounds, get the number closest to it and output that instead.
+         Files are prefixed based on their target type (GOAL or POWERSHOT), so target.getTargetType() is used
+         Target types are defined in the TargetType enum
+         I'm not entirely sure if the .trims are necessary, but there's no harm in having them.
+        */
+        if (distanceFromTarget<60){
+            launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType() + "60.txt")).trim());
+        } else if (distanceFromTarget>120) {
+            launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType()+ "120.txt")).trim());
+        // Otherwise, act normally and average the two nearest files.
+        } else {
+            /*
+             These retrieve the needed files stored during calibration.
+             To continue the previous example, launchAngleLow would get the value stored in 60.txt while launchAngleHigh would get the value stored in 70.txt.
+            */
+            double launchAngleHigh = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(String.valueOf(target.getTargetType()) + roundedUpDistance + ".txt")).trim());
+            double launchAngleLow = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(String.valueOf(target.getTargetType()) + roundedDownDistance + ".txt")).trim());
+            // lowLaunchAngleWeight is the weight applied to the lower value as a multiplier. For 68, this would be .2, while for 61 is would be .9.
+            double lowLaunchAngleWeight = .1 * (roundedUpDistance - distanceFromTarget);
+            double highLaunchAngleWeight = 1 - lowLaunchAngleWeight;
+            launchAngleReal = (lowLaunchAngleWeight * launchAngleLow) + (highLaunchAngleWeight * launchAngleHigh);
+        }
+        return launchAngleReal;
     }
 }

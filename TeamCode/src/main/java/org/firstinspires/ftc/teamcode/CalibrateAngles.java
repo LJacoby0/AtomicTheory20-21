@@ -6,27 +6,36 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
-import java.io.File;
 
-
-class CalibrateAngles extends OpMode {
+public abstract class CalibrateAngles extends OpMode {
 
     public static final double INCREMENT = .05;
+    Robot rb = new Robot();
+
+    public abstract TargetType getTargetType();
+
+    private TargetType targetType = null;
 
     @Override
     public void init() {
+        targetType = getTargetType();
     }
     boolean leftWasDown = false;
     boolean rightWasDown = false;
     boolean aWasDown = false;
-    public double launchAngle = 0.5;
-    public int currentDistance = 60;
+    double launchAngle = 0.5;
+    int minDistance = 6;
+    int maxDistance = 120;
 
+
+
+    int currentDistance = minDistance;
     @Override
     public void loop(){
-        //Loop until all files 60-120 have been created
-        while (currentDistance <= 120){
-            telemetry.addData("currentDistance",currentDistance);
+        //Loop until all files 50-120 have been created
+        while (currentDistance <= maxDistance){
+            telemetry.addData("Target Type", targetType);
+            telemetry.addData("currentDistance", currentDistance);
             telemetry.addData("launchAngle", launchAngle);
             telemetry.update();
 
@@ -39,7 +48,7 @@ class CalibrateAngles extends OpMode {
             if (gamepad1.a) {
                 if (!aWasDown) {
                     aWasDown = true;
-                    ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile(currentDistance + ".txt"), String.valueOf(launchAngle));
+                    ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType) + currentDistance + ".txt"), String.valueOf(launchAngle));
                     currentDistance += 10;
                 } else {
                     aWasDown = false;
@@ -66,7 +75,6 @@ class CalibrateAngles extends OpMode {
                     } else {
                         launchAngle += INCREMENT;
                     }
-
                 }
             } else {
                 rightWasDown = false;
