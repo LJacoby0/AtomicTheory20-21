@@ -44,7 +44,7 @@ class Robot {
     void drive(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
             frontLeftMotor.setPower((leftStickX + leftStickY + rightStickX) * sensitivity);
             frontRightMotor.setPower((-leftStickX + leftStickY - rightStickX) * sensitivity);
-            backLeftMotor.setPower((-leftStickX + leftStickY + + rightStickX) * sensitivity);
+            backLeftMotor.setPower((-leftStickX + leftStickY + rightStickX) * sensitivity);
             backRightMotor.setPower((leftStickX + leftStickY - rightStickX) * sensitivity);
     }
     void driveStop() {
@@ -61,7 +61,7 @@ class Robot {
     public double getDistanceFromTarget (Target target){
         double xDistance = 0;
         double zDistance = 0;
-        return Math.hypot(xDistance, zDistance);
+        return Math.hypot(xDistance - target.getX(), zDistance);
     }
     // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
     public double getLaunchAngle( Target target) {
