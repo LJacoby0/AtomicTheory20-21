@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -22,9 +24,9 @@ class Robot {
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to brake when power is zero
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,6 +49,19 @@ class Robot {
             backLeftMotor.setPower((-leftStickX + leftStickY + rightStickX) * sensitivity);
             backRightMotor.setPower((leftStickX + leftStickY - rightStickX) * sensitivity);
     }
+    void driveOld(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
+        if (Math.abs(leftStickX) >= (2 * Math.abs(leftStickY)) + .1) {
+            frontLeftMotor.setPower(leftStickX * sensitivity);
+            frontRightMotor.setPower(-leftStickX * sensitivity);
+            backLeftMotor.setPower(-leftStickX * sensitivity);
+            backRightMotor.setPower(leftStickX * sensitivity);
+        } else {
+            frontLeftMotor.setPower((leftStickY + rightStickX) * sensitivity);
+            frontRightMotor.setPower((leftStickY - rightStickX) * sensitivity);
+            backLeftMotor.setPower((leftStickY + rightStickX) * sensitivity);
+            backRightMotor.setPower((leftStickY - rightStickX) * sensitivity);
+        }
+    }
     void driveStop() {
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
@@ -64,7 +79,7 @@ class Robot {
         return Math.hypot(xDistance - target.getX(), zDistance);
     }
     // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
-    public double getLaunchAngle( Target target) {
+    public double getLaunchAngle(Target target) {
         double distanceFromTarget = getDistanceFromTarget(target);
         /*
          Math.floor basically rounds down an integer. Both 6.1 and 6.8 would become 6.
@@ -73,13 +88,13 @@ class Robot {
         double roundedDownDistance = Math.floor(distanceFromTarget / 10.0) * 10;
         // Same thing but the other way for Math.ceil
         double roundedUpDistance = Math.ceil(distanceFromTarget / 10.0) * 10;
-        double launchAngleReal = 0;
         /*
          If the number is outside normal bounds, get the number closest to it and output that instead.
          Files are prefixed based on their target type (GOAL or POWERSHOT), so target.getTargetType() is used
          Target types are defined in the TargetType enum
          I'm not entirely sure if the .trims are necessary, but there's no harm in having them.
         */
+        double launchAngleReal = 0;
         if (distanceFromTarget<60){
             launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType() + "60.txt")).trim());
         } else if (distanceFromTarget>120) {

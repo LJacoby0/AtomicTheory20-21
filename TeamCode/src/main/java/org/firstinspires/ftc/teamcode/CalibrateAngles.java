@@ -24,7 +24,7 @@ public abstract class CalibrateAngles extends OpMode {
     boolean rightWasDown = false;
     boolean aWasDown = false;
     double launchAngle = 0.5;
-    int minDistance = 6;
+    int minDistance = 60;
     int maxDistance = 120;
 
 
