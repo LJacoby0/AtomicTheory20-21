@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-enum TargetType {
+public enum TargetType {
     GOAL, POWERSHOT
 }
