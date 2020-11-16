@@ -32,7 +32,7 @@ public abstract class CalibrateAngles extends OpMode {
     int currentDistance = minDistance;
     @Override
     public void loop(){
-        //Loop until all files 50-120 have been created
+        //Loop until all files 60-120 have been created
         while (currentDistance <= maxDistance){
             telemetry.addData("Target Type", targetType);
             telemetry.addData("currentDistance", currentDistance);
