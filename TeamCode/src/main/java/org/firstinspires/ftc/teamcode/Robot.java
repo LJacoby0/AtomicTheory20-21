@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -35,6 +36,12 @@ class Robot {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+
+
+    double normalize(double power){
+        return Range.clip(power, -1, 1);
+    }
+
     /**
      *
      * @param leftStickX
@@ -42,12 +49,24 @@ class Robot {
      * @param rightStickX
      * @param sensitivity
      */
-
     void drive(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
-            frontLeftMotor.setPower((leftStickX + leftStickY + rightStickX) * sensitivity);
-            frontRightMotor.setPower((-leftStickX + leftStickY - rightStickX) * sensitivity);
-            backLeftMotor.setPower((-leftStickX + leftStickY + rightStickX) * sensitivity);
-            backRightMotor.setPower((leftStickX + leftStickY - rightStickX) * sensitivity);
+        //Use math to figure out the correct powers for each wheel
+        double flPower = (leftStickX + leftStickY + rightStickX) * sensitivity;
+        double frPower = (-leftStickX + leftStickY - rightStickX) * sensitivity;
+        double blPower = (-leftStickX + leftStickY + rightStickX) * sensitivity;
+        double brPower = (leftStickX + leftStickY - rightStickX) * sensitivity;
+
+        //Make sure none of them are less than -1 or greater than 1
+        flPower = normalize(flPower);
+        frPower = normalize(frPower);
+        blPower = normalize(blPower);
+        brPower = normalize(brPower);
+
+        //Actually set them
+        frontLeftMotor.setPower(flPower);
+        frontRightMotor.setPower(frPower);
+        backLeftMotor.setPower(blPower);
+        backRightMotor.setPower(brPower);
     }
     void driveOld(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
         if (Math.abs(leftStickX) >= (2 * Math.abs(leftStickY)) + .1) {
@@ -86,7 +105,7 @@ class Robot {
          To make this work, 61 and 68 need to become 6.1 and 6.8, so we divide by 10.
         */
         double roundedDownDistance = Math.floor(distanceFromTarget / 10.0) * 10;
-        // Same thing but the other way for Math.ceil
+        //Same thing but the other way for Math.ceil
         double roundedUpDistance = Math.ceil(distanceFromTarget / 10.0) * 10;
         /*
          If the number is outside normal bounds, get the number closest to it and output that instead.
@@ -95,11 +114,13 @@ class Robot {
          I'm not entirely sure if the .trims are necessary, but there's no harm in having them.
         */
         double launchAngleReal = 0;
+        //If the number inputted is outside normal bounds, get the number closest to it.
+        //THIS CAN VERY EASILY HIDE PROBLEMS WITH ODOMETRY OR GETDISTANCEFROMTARGET, BE CAREFUL.
         if (distanceFromTarget<60){
             launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType() + "60.txt")).trim());
         } else if (distanceFromTarget>120) {
             launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType()+ "120.txt")).trim());
-        // Otherwise, act normally and average the two nearest files.
+        //Otherwise, act normally and average the two nearest files.
         } else {
             /*
              These retrieve the needed files stored during calibration.
