@@ -10,7 +10,7 @@ import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
 @TeleOp(name = "Remote TeleOp", group = "Remote")
 public class RemoteTeleOp extends OpMode {
-    private Robot rb = new Robot();
+    private Robot rb = new Robot(telemetry);
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");

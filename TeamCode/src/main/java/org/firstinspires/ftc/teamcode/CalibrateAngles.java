@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 public abstract class CalibrateAngles extends OpMode {
 
     public static final double INCREMENT = .05;
-    Robot rb = new Robot();
+    Robot rb = new Robot(telemetry);
 
     public abstract TargetType getTargetType();
 

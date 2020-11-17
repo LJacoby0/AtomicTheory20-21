@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 class Robot {
@@ -15,7 +16,10 @@ class Robot {
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
-
+    Telemetry telemetry;
+    public Robot(Telemetry telemetry){
+        this.telemetry = telemetry;
+    }
     void init(HardwareMap hardwareMap) {
         // Initialize drive motors
         frontLeftMotor = hardwareMap.get(DcMotor.class, "fl");
@@ -55,7 +59,9 @@ class Robot {
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
-        if (maxPower<1) { maxPower = 1; }
+        if (maxPower<1) {
+            maxPower = 1;
+        }
 
         //Make all of them proportional to the greatest value and factor in slow mode.
         flPower = (flPower / maxPower) * sensitivity;
@@ -103,12 +109,17 @@ class Robot {
         */
         double launchAngleReal = 0;
         //If the number inputted is outside normal bounds, get the number closest to it.
-        //THIS CAN VERY EASILY HIDE PROBLEMS WITH ODOMETRY OR GETDISTANCEFROMTARGET, BE CAREFUL.
         if (distanceFromTarget<60){
             launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType() + "60.txt")).trim());
+            telemetry.addData("WARNING","distanceFromTarget is below 60. This shouldn't be happening in normal operation.");
+            telemetry.speak("Warning");
+            telemetry.update();
         } else if (distanceFromTarget>120) {
             launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType()+ "120.txt")).trim());
-        //Otherwise, act normally and average the two nearest files.
+            telemetry.addData("WARNING","distanceFromTarget is above 120. This shouldn't be happening in normal operation.");
+            telemetry.speak("Warning");
+            telemetry.update();
+            //Otherwise, act normally and average the two nearest files.
         } else {
             /*
              These retrieve the needed files stored during calibration.

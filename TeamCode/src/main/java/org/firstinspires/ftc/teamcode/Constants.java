@@ -15,8 +15,12 @@ class Constants {
 
     // TARGET CONSTANTS
     // These need to be changed
-    public static final Target powershot1 = new Target(30,TargetType.POWERSHOT);
-    public static final Target powershot2 = new Target(36,TargetType.POWERSHOT);
-    public static final Target powershot3 = new Target(42,TargetType.POWERSHOT);
-    public static final Target topGoal = new Target(60, TargetType.GOAL);
+    public static final Target redPowershot1 = new Target(30,TargetType.POWERSHOT);
+    public static final Target redPowershot2 = new Target(36,TargetType.POWERSHOT);
+    public static final Target redPowershot3 = new Target(42,TargetType.POWERSHOT);
+    public static final Target redTopGoal = new Target(60, TargetType.GOAL);
+    public static final Target bluePowershot1 = new Target(30,TargetType.POWERSHOT);
+    public static final Target bluePowershot2 = new Target(36,TargetType.POWERSHOT);
+    public static final Target bluePowershot3 = new Target(42,TargetType.POWERSHOT);
+    public static final Target blueTopGoal = new Target(60, TargetType.GOAL);
 }
