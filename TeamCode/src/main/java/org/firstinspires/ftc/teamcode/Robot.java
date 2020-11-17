@@ -38,9 +38,6 @@ class Robot {
 
 
 
-    double normalize(double power){
-        return Range.clip(power, -1, 1);
-    }
 
     /**
      *
@@ -51,35 +48,26 @@ class Robot {
      */
     void drive(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
         //Use math to figure out the correct powers for each wheel
-        double flPower = (leftStickX + leftStickY + rightStickX) * sensitivity;
-        double frPower = (-leftStickX + leftStickY - rightStickX) * sensitivity;
-        double blPower = (-leftStickX + leftStickY + rightStickX) * sensitivity;
-        double brPower = (leftStickX + leftStickY - rightStickX) * sensitivity;
+        double flPower = (leftStickX + leftStickY + rightStickX);
+        double frPower = (-leftStickX + leftStickY - rightStickX);
+        double blPower = (-leftStickX + leftStickY + rightStickX);
+        double brPower = (leftStickX + leftStickY - rightStickX);
 
-        //Make sure none of them are less than -1 or greater than 1
-        flPower = normalize(flPower);
-        frPower = normalize(frPower);
-        blPower = normalize(blPower);
-        brPower = normalize(brPower);
+        //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
+        double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
+        if (maxPower<1) { maxPower = 1; }
+
+        //Make all of them proportional to the greatest value and factor in slow mode.
+        flPower = (flPower / maxPower) * sensitivity;
+        frPower = (frPower / maxPower) * sensitivity;
+        blPower = (blPower / maxPower) * sensitivity;
+        brPower = (brPower / maxPower) * sensitivity;
 
         //Actually set them
         frontLeftMotor.setPower(flPower);
         frontRightMotor.setPower(frPower);
         backLeftMotor.setPower(blPower);
         backRightMotor.setPower(brPower);
-    }
-    void driveOld(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
-        if (Math.abs(leftStickX) >= (2 * Math.abs(leftStickY)) + .1) {
-            frontLeftMotor.setPower(leftStickX * sensitivity);
-            frontRightMotor.setPower(-leftStickX * sensitivity);
-            backLeftMotor.setPower(-leftStickX * sensitivity);
-            backRightMotor.setPower(leftStickX * sensitivity);
-        } else {
-            frontLeftMotor.setPower((leftStickY + rightStickX) * sensitivity);
-            frontRightMotor.setPower((leftStickY - rightStickX) * sensitivity);
-            backLeftMotor.setPower((leftStickY + rightStickX) * sensitivity);
-            backRightMotor.setPower((leftStickY - rightStickX) * sensitivity);
-        }
     }
     void driveStop() {
         frontLeftMotor.setPower(0);

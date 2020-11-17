@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 class Constants {
     // DRIVING CONSTANTS
-    public static final float DRIVE_POWER = .7f;
+    public static final float DRIVE_POWER = 1;
     public static final float DRIVE_POWER_SLOW = .4f;
     public static final float DRIVE_STICK_THRESHOLD = .3f;
     public static final float TRIGGER_THRESHOLD = .65f;
