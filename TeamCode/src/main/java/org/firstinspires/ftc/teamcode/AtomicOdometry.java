@@ -45,7 +45,7 @@ public class AtomicOdometry {
     public void update(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder) {
         double leftChange = verticalEncoderLeft.getCurrentPosition() - oldLeftPosition;
         double rightChange = verticalEncoderRight.getCurrentPosition() - oldRightPosition;
-        double horizontalChange = horizontalEncoder.getCurrentPosition() - oldHorizontalPosition;
+        double rawHorizontalChange = horizontalEncoder.getCurrentPosition() - oldHorizontalPosition;
 
 
         double dx = 0;
@@ -54,6 +54,8 @@ public class AtomicOdometry {
 
         changeInRobotOrientation = (leftChange - rightChange) / robotEncoderWheelDistance;
         robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+
+        double horizontalChange = rawHorizontalChange;
 
 
         oldLeftPosition = verticalEncoderLeft.getCurrentPosition();
