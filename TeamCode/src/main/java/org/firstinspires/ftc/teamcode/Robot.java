@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.IOException;
 
 class Robot {
     //Declare motors
@@ -17,6 +17,9 @@ class Robot {
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
     Telemetry telemetry;
+    InterpLUT goalLut = new InterpLUT();
+    InterpLUT powershotLut = new InterpLUT();
+
     public Robot(Telemetry telemetry){
         this.telemetry = telemetry;
     }
@@ -38,8 +41,10 @@ class Robot {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
 
+        createCalibrationInterplut(goalLut, TargetType.GOAL);
+        createCalibrationInterplut(powershotLut, TargetType.POWERSHOT);
+    }
 
 
 
@@ -92,46 +97,29 @@ class Robot {
         return Math.hypot(xDistance - target.getX(), zDistance);
     }
     // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
-    public double getLaunchAngle(Target target) {
-        double distanceFromTarget = getDistanceFromTarget(target);
-        /*
-         Math.floor basically rounds down an integer. Both 6.1 and 6.8 would become 6.
-         To make this work, 61 and 68 need to become 6.1 and 6.8, so we divide by 10.
-        */
-        double roundedDownDistance = Math.floor(distanceFromTarget / 10.0) * 10;
-        //Same thing but the other way for Math.ceil
-        double roundedUpDistance = Math.ceil(distanceFromTarget / 10.0) * 10;
-        /*
-         If the number is outside normal bounds, get the number closest to it and output that instead.
-         Files are prefixed based on their target type (GOAL or POWERSHOT), so target.getTargetType() is used
-         Target types are defined in the TargetType enum
-         I'm not entirely sure if the .trims are necessary, but there's no harm in having them.
-        */
-        double launchAngleReal = 0;
-        //If the number inputted is outside normal bounds, get the number closest to it.
-        if (distanceFromTarget<60){
-            launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType() + "60.txt")).trim());
-            telemetry.addData("WARNING","distanceFromTarget is below 60. This shouldn't be happening in normal operation.");
-            telemetry.speak("Warning");
-            telemetry.update();
-        } else if (distanceFromTarget>120) {
-            launchAngleReal = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(target.getTargetType()+ "120.txt")).trim());
-            telemetry.addData("WARNING","distanceFromTarget is above 120. This shouldn't be happening in normal operation.");
-            telemetry.speak("Warning");
-            telemetry.update();
-            //Otherwise, act normally and average the two nearest files.
-        } else {
-            /*
-             These retrieve the needed files stored during calibration.
-             To continue the previous example, launchAngleLow would get the value stored in 60.txt while launchAngleHigh would get the value stored in 70.txt.
-            */
-            double launchAngleHigh = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(String.valueOf(target.getTargetType()) + roundedUpDistance + ".txt")).trim());
-            double launchAngleLow = Double.parseDouble(ReadWriteFile.readFile(AppUtil.getInstance().getSettingsFile(String.valueOf(target.getTargetType()) + roundedDownDistance + ".txt")).trim());
-            // lowLaunchAngleWeight is the weight applied to the lower value as a multiplier. For 68, this would be .2, while for 61 is would be .9.
-            double lowLaunchAngleWeight = .1 * (roundedUpDistance - distanceFromTarget);
-            double highLaunchAngleWeight = 1 - lowLaunchAngleWeight;
-            launchAngleReal = (lowLaunchAngleWeight * launchAngleLow) + (highLaunchAngleWeight * launchAngleHigh);
+    public Double getLaunchAngle(Target target) {
+        //If we're shooting at a goal, get it from the goal interplut, otherwise get it from the powershot. The other one is just a sanity check.
+        if (target.getTargetType() == TargetType.GOAL){
+            return goalLut.get(getDistanceFromTarget(target));
+        } else if(target.getTargetType() == TargetType.POWERSHOT){
+            return powershotLut.get(getDistanceFromTarget(target));
         }
-        return launchAngleReal;
+        else {
+            telemetry.speak("Something's Wrong!");
+            telemetry.update();
+            return null;
+        }
+    }
+    private void createCalibrationInterplut(InterpLUT lut, TargetType targetType){
+        //Read the files we made in CalibrateGoal/Powershot, and make an interplut out of them.
+        for (int i = 60; i <= 120; i+=10) {
+            try {
+                lut.add(i, Double.parseDouble(ReadWriteFile.readFileOrThrow(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType)+i+".txt"))));
+            } catch (IOException e) {
+                telemetry.speak("Warning: Calibration Failed");
+                telemetry.addData("Calibration","Failed");
+                telemetry.update();
+            }
+        }
     }
 }

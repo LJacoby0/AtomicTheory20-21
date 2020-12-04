@@ -31,7 +31,6 @@ public class LoggingUtil {
         buildLogList(logFiles, ROAD_RUNNER_FOLDER);
         Collections.sort(logFiles, (lhs, rhs) ->
                 Long.compare(lhs.lastModified(), rhs.lastModified()));
-
         long dirSize = 0;
         for (File file: logFiles) {
             dirSize += file.length();

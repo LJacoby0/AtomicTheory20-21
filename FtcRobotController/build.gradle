@@ -16,7 +16,7 @@ android {
     compileSdkVersion 28
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility sourceCompatibility
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
