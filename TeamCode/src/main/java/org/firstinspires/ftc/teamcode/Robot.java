@@ -65,9 +65,8 @@ class Robot {
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
-        if (maxPower<1) {
-            maxPower = 1;
-        }
+        //If the maxPower is less than 1, make it 1
+        maxPower = Math.max(maxPower, 1);
 
         //Make all of them proportional to the greatest value and factor in slow mode.
         flPower = (flPower / maxPower) * sensitivity;
@@ -86,6 +85,15 @@ class Robot {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
+    }
+    void shoot(double power){
+        //flywheelMotor.setPower(power);
+        //loadServo.setPosition(load);
+    }
+
+    void shoot(){
+        //flywheelMotor.setPower(1);
+        //loadServo.setPosition(load);
     }
     /*
      This gets the distance from any given target using odometry inputs.
