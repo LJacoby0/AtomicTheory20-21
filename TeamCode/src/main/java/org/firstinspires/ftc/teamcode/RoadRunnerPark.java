@@ -22,5 +22,4 @@ public class RoadRunnerPark extends LinearOpMode {
         waitForStart();
         drive.followTrajectory(newTrajectory);
     }
-
 }

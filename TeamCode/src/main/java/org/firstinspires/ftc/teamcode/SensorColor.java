@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
-@TeleOp(name = "Sensor: Color", group = "Sensor")
+@TeleOp(name = "At Color", group = "Sensor")
 public class SensorColor extends OpMode {
 
   /** The colorSensor field will contain a reference to our color sensor hardware object */
