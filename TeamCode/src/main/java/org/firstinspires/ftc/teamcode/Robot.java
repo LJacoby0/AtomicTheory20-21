@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -87,27 +88,27 @@ class Robot {
         backRightMotor.setPower(0);
     }
     /*
-     This gets the distance from any given target using the odometry
-     It just uses the equation for the distance between two points
-     The values need to be updated to use odometry once it's working
+     This gets the distance from any given target using odometry inputs.
+     Pose2d.getX and Pose2d.getY should be used to fill out the arguments.
     */
-    public double getDistanceFromTarget (Target target){
-        double xDistance = 0;
-        double zDistance = 0;
-        return Math.hypot(xDistance - target.getX(), zDistance);
+    public double getDistanceFromTarget (double currentX, double currentY, Target target){
+        double xDistance = Math.abs(currentX - target.getX());
+        double yDistance = Math.abs(currentY - 120);
+        return Math.hypot(xDistance, yDistance);
     }
     // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
-    public Double getLaunchAngle(Target target) {
+    public double getLaunchPower(Target target, Pose2d pose) {
         //If we're shooting at a goal, get it from the goal interplut, otherwise get it from the powershot. The other one is just a sanity check.
         if (target.getTargetType() == TargetType.GOAL){
-            return goalLut.get(getDistanceFromTarget(target));
+            return goalLut.get(getDistanceFromTarget(pose.getX(), pose.getY(), target));
         } else if(target.getTargetType() == TargetType.POWERSHOT){
-            return powershotLut.get(getDistanceFromTarget(target));
+            return powershotLut.get(getDistanceFromTarget(pose.getX(), pose.getY(), target));
         }
         else {
             telemetry.speak("Something's Wrong!");
+            telemetry.addData("ERROR:","No target type");
             telemetry.update();
-            return null;
+            return 0;
         }
     }
     private void createCalibrationInterplut(InterpLUT lut, TargetType targetType){
