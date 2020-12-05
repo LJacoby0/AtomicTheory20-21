@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 
-public abstract class CalibrateAngles extends OpMode {
+public abstract class CalibratePower extends OpMode {
 
     public static final double INCREMENT = .05;
     Robot rb = new Robot(telemetry);
@@ -23,7 +23,7 @@ public abstract class CalibrateAngles extends OpMode {
     boolean leftWasDown = false;
     boolean rightWasDown = false;
     boolean aWasDown = false;
-    double launchAngle = 0.5;
+    double launchPower = 0.5;
     int minDistance = 60;
     int maxDistance = 120;
 
@@ -36,19 +36,19 @@ public abstract class CalibrateAngles extends OpMode {
         while (currentDistance <= maxDistance){
             telemetry.addData("Target Type", targetType);
             telemetry.addData("currentDistance", currentDistance);
-            telemetry.addData("launchAngle", launchAngle);
+            telemetry.addData("launchPower", launchPower);
             telemetry.update();
 
             //This will eventually implement the robot and allow for shooting during calibration
             if (gamepad1.right_trigger >= Constants.TRIGGER_THRESHOLD) {
-                //rb.shoot(launchAngle);
+                rb.shoot(launchPower);
             }
             /*If the a button is pressed, save the current angle to a file.
               All the "xWasDown" stuff is so none of this happens twice for just one button press.*/
             if (gamepad1.a) {
                 if (!aWasDown) {
                     aWasDown = true;
-                    ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType) + currentDistance + ".txt"), String.valueOf(launchAngle));
+                    ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType) + currentDistance + ".txt"), String.valueOf(launchPower));
                     currentDistance += 10;
                 } else {
                     aWasDown = false;
@@ -59,9 +59,9 @@ public abstract class CalibrateAngles extends OpMode {
                 if (!leftWasDown) {
                     leftWasDown = true;
                     if (gamepad1.b) {
-                        launchAngle -= .01;
+                        launchPower -= .01;
                     } else {
-                        launchAngle -= INCREMENT;
+                        launchPower -= INCREMENT;
                     }
                 }
             } else {
@@ -71,9 +71,9 @@ public abstract class CalibrateAngles extends OpMode {
                 if (!rightWasDown) {
                     rightWasDown = true;
                     if (gamepad1.b) {
-                        launchAngle += .01;
+                        launchPower += .01;
                     } else {
-                        launchAngle += INCREMENT;
+                        launchPower += INCREMENT;
                     }
                 }
             } else {
