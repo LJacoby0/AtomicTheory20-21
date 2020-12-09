@@ -7,6 +7,9 @@ class Constants {
     public static final float DRIVE_POWER_SLOW = .4f;
     public static final float DRIVE_STICK_THRESHOLD = .3f;
     public static final float TRIGGER_THRESHOLD = .65f;
+    public static final float POWER_CONSTANT = .8f;
+
+
     // ODOMETRY CONSTANTS
     public static final float ODOMETRY_WHEEL_DIAMETER = 6.18f; //in inches
     public static final float COUNTS_PER_ROTATION = 200; //because of the encoders we have
