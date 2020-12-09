@@ -61,9 +61,9 @@ public class SensorColor extends OpMode {
     Color.colorToHSV(colors.toColor(), hsvValues);
     //Add all the values to telemetry
     telemetry.addLine()
-            .addData("Red", "%.3f", colors.red)
-            .addData("Green", "%.3f", colors.green)
-            .addData("Blue", "%.3f", colors.blue);
+            .addData("Red", colors.red)
+            .addData("Green", colors.green)
+            .addData("Blue", colors.blue);
     telemetry.addLine()
             .addData("Hue", "%.3f", hsvValues[0])
             .addData("Saturation", "%.3f", hsvValues[1])
