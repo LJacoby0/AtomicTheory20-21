@@ -10,13 +10,13 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 
 public abstract class ServoTest extends OpMode {
-
+    public abstract String getServoName();
     public static final double INCREMENT = .05;
 //    Robot rb = new Robot(telemetry);
     Servo servo;
     @Override
     public void init() {
-        servo = hardwareMap.get(Servo.class, "servo");
+        servo = hardwareMap.get(Servo.class, getServoName());
     }
 
     boolean leftWasDown = false;
