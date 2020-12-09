@@ -33,10 +33,10 @@ public abstract class ServoTest extends OpMode {
             if (!aWasDown) {
                 aWasDown = true;
                 servo.setPosition(servoPosition);
-            } else {
+            }
+        } else {
                 aWasDown = false;
             }
-        }
         //Use the bumpers to change the angle. If the b button is pressed, change it slowly.
         if (gamepad1.left_bumper) {
             if (!leftWasDown) {
