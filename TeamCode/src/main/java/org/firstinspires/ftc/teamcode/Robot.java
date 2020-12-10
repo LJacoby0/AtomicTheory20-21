@@ -1,22 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 class Robot {
     //Declare motors
@@ -24,14 +18,14 @@ class Robot {
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
-    //DcMotor flywheelMotor;
+    DcMotor flywheelMotor;
     DcMotor leftEncoder;
     DcMotor middleEncoder;
     DcMotor rightEncoder;
     Telemetry telemetry;
     InterpLUT goalLut = new InterpLUT();
     InterpLUT powershotLut = new InterpLUT();
-    boolean isCalibrated = true;
+    static boolean isCalibrated = true;
 
     public Robot(Telemetry telemetry){
         this.telemetry = telemetry;
@@ -42,28 +36,29 @@ class Robot {
         frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
+        flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
         leftEncoder = hardwareMap.get(DcMotor.class, "odol");
         middleEncoder = hardwareMap.get(DcMotor.class, "odom");
         rightEncoder = hardwareMap.get(DcMotor.class, "odor");
-
-        //flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        //flywheelMotor.setDirection(DcMotor.Direction.FORWARD);
+        flywheelMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to brake when power is zero
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Create the calibration tables from previously created files that will be used throughout the match.
+        //This means we only have to read from the files once, increasing performance
         createCalibrationInterplut(goalLut, TargetType.GOAL);
         createCalibrationInterplut(powershotLut, TargetType.POWERSHOT);
     }
@@ -113,7 +108,7 @@ class Robot {
                 power = powershotLut.get(getDistanceFromTarget(pose, target));
             }
         } else {
-            power = Constants.POWER_CONSTANT;
+            power = Constants.FLYWHEEL_CONSTANT;
         }
         shoot(power, timer, isFirst);
     }
@@ -124,7 +119,8 @@ class Robot {
         }
         //flywheelMotor.setPower(power);
         double timeSinceStart = timer.time() - startTime;
-        if (timeSinceStart>500 && timeSinceStart % 500<250){
+        //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
+        if (timeSinceStart % Constants.SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_SERVO_ROTATION_TIME){
             //loadServo.setPosition(Constants.back);
         } else {
             //loadServo.setPosition(Constants.load);
@@ -140,7 +136,7 @@ class Robot {
         return Math.hypot(xDistance, yDistance);
     }
     // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
-    public double getLaunchPower(@NotNull Target target, Pose2d pose) {
+    public double getLaunchPower(Target target, Pose2d pose) {
         //If we're shooting at a goal, get it from the goal interplut, otherwise get it from the powershot. The other one is just a sanity check.
         if (target.getTargetType() == TargetType.GOAL){
             return goalLut.get(getDistanceFromTarget(pose, target));
@@ -151,12 +147,12 @@ class Robot {
             telemetry.speak("Something's Wrong!");
             telemetry.addData("ERROR:","No target type");
             telemetry.update();
-            return 1;
+            return 0;
         }
     }
     private void createCalibrationInterplut(InterpLUT lut, TargetType targetType){
         //Read the files we made in CalibrateGoal/Powershot, and make an interplut out of them.
-        for (int i = 60; i <= 120; i+=10) {
+        for (int i = Constants.MINIMUM_DISTANCE; i <= Constants.MAXIMUM_DISTANCE; i+=10) {
             try {
                 lut.add(i, Double.parseDouble(ReadWriteFile.readFileOrThrow(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType)+i+".txt"))));
                 isCalibrated = true;
