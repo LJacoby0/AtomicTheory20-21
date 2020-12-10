@@ -7,7 +7,7 @@ class Constants {
     public static final float DRIVE_POWER_SLOW = .4f;
     public static final float DRIVE_STICK_THRESHOLD = .3f;
     public static final float TRIGGER_THRESHOLD = .65f;
-    public static final float POWER_CONSTANT = .8f;
+    public static final float FLYWHEEL_CONSTANT = .5f;
 
 
     // ODOMETRY CONSTANTS
@@ -26,4 +26,13 @@ class Constants {
     public static final Target bluePowershot2 = new Target(36,TargetType.POWERSHOT);
     public static final Target bluePowershot3 = new Target(42,TargetType.POWERSHOT);
     public static final Target blueTopGoal = new Target(60, TargetType.GOAL);
+
+    // DISTANCE CONSTANTS
+    public static final int MINIMUM_DISTANCE = 60;
+    public static final int MAXIMUM_DISTANCE = 140;
+
+    // SERVO CONSTANTS
+    public static final int SERVO_ROTATION_TIME_MILLISECONDS = 700;
+    //This is just a best practice, it could also just be put in the one file we need it in (AdvancedTeleOp)
+    public static final int HALF_SERVO_ROTATION_TIME = SERVO_ROTATION_TIME_MILLISECONDS / 2;
 }

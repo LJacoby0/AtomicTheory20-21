@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
+import static org.firstinspires.ftc.teamcode.Constants.FLYWHEEL_CONSTANT;
+import static org.firstinspires.ftc.teamcode.Constants.MAXIMUM_DISTANCE;
+import static org.firstinspires.ftc.teamcode.Constants.MINIMUM_DISTANCE;
 import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
 
@@ -29,17 +32,15 @@ public abstract class CalibratePower extends OpMode {
     boolean rightWasDown = false;
     boolean aWasDown = false;
     boolean triggerWasDown = false;
-    double launchPower = 0.5;
-    int minDistance = 60;
-    int maxDistance = 120;
+    double launchPower = FLYWHEEL_CONSTANT;
 
 
-    int currentDistance = minDistance;
+    int currentDistance = MINIMUM_DISTANCE;
 
     @Override
     public void loop() {
         //Loop until all files 60-120 have been created
-        while (currentDistance <= maxDistance) {
+        while (currentDistance <= MAXIMUM_DISTANCE) {
             telemetry.addData("Target Type", targetType);
             telemetry.addData("currentDistance", currentDistance);
             telemetry.addData("launchPower", launchPower);

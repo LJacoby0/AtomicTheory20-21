@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,43 +32,16 @@ public class RemoteTeleOp extends OpMode {
         telemetry.update();
     }
 
-    int targetInt = 0;
-    boolean rbWasDown;
-    boolean lbWasDown;
     boolean triggerWasDown;
-    Target[] targets = new Target[]{Constants.blueTopGoal, Constants.bluePowershot1, Constants.bluePowershot2, Constants.bluePowershot3};
 
     private void shootTarget() {
-        //This code cycles through the target list using the bumpers
-        if (gamepad1.right_bumper) {
-            if (!rbWasDown) {
-                rbWasDown = true;
-                targetInt += 1;
-            }
-        } else {
-            rbWasDown = false;
-        }
-        if (gamepad1.left_bumper) {
-            if (!lbWasDown) {
-                lbWasDown = true;
-                targetInt -= 1;
-            }
-        } else {
-            lbWasDown = false;
-        }
-        if (targetInt<0){
-            targetInt = targets.length-1;
-        } else if (targetInt>targets.length-1){
-            targetInt = 0;
-        }
-        telemetry.addData("Current Target:", targets[targetInt]);
         //This tells the command whether or not it's the first time the button has been pressed.
         if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
-                rb.shoot(Constants.POWER_CONSTANT, elapsedTime, true);
+                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true);
             } else {
-                rb.shoot(Constants.POWER_CONSTANT, elapsedTime, false);
+                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, false);
             }
         } else {
             triggerWasDown = false;
