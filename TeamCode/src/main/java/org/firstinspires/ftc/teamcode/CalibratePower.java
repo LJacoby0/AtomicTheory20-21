@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
+import static org.firstinspires.ftc.teamcode.Constants.CALIBRATION_INTERVAL;
 import static org.firstinspires.ftc.teamcode.Constants.FLYWHEEL_CONSTANT;
 import static org.firstinspires.ftc.teamcode.Constants.MAXIMUM_DISTANCE;
 import static org.firstinspires.ftc.teamcode.Constants.MINIMUM_DISTANCE;
@@ -26,6 +27,7 @@ public abstract class CalibratePower extends OpMode {
     @Override
     public void init() {
         targetType = getTargetType();
+        rb.init(hardwareMap);
     }
 
     boolean leftWasDown = false;
@@ -63,7 +65,7 @@ public abstract class CalibratePower extends OpMode {
                 if (!aWasDown) {
                     aWasDown = true;
                     ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType) + currentDistance + ".txt"), String.valueOf(launchPower));
-                    currentDistance += 10;
+                    currentDistance += CALIBRATION_INTERVAL;
                 }
             } else {
                 aWasDown = false;
@@ -98,8 +100,7 @@ public abstract class CalibratePower extends OpMode {
         telemetry.addData("Done!","Press A to finish.");
         telemetry.update();
 
-        if(gamepad1.a)
-    {
+        if(gamepad1.a) {
         stop();
     }
 }

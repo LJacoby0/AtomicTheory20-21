@@ -37,9 +37,9 @@ class Robot {
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
         flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
-        leftEncoder = hardwareMap.get(DcMotor.class, "odol");
-        middleEncoder = hardwareMap.get(DcMotor.class, "odom");
-        rightEncoder = hardwareMap.get(DcMotor.class, "odor");
+        //leftEncoder = hardwareMap.get(DcMotor.class, "odol");
+        //middleEncoder = hardwareMap.get(DcMotor.class, "odom");
+        //rightEncoder = hardwareMap.get(DcMotor.class, "odor");
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -98,7 +98,9 @@ class Robot {
 
     static double startTime;
 
-    //However, when it's the first time, we call this one
+    //This uses calibrated values to shoot. If the robot does not have calibrated values, it defaults back
+    //to the value set in Constants.FLYWHEEL_CONSTANT.
+    //It should be used in almost all autonomous and TeleOp opmodes
     void aimAndShoot(Pose2d pose, Target target, ElapsedTime timer, boolean isFirst){
         double power;
         if (isCalibrated){
@@ -112,15 +114,17 @@ class Robot {
         }
         shoot(power, timer, isFirst);
     }
-    //This is the standard shoot command
+    //This is the basic shoot command. It only shoots, and is used directly only in calibration,
+    //though it is called indirectly in aimAndShoot. It shouldn't be used directly in most opModes.
     void shoot(double power, ElapsedTime timer, boolean isFirst){
         if (isFirst) {
             startTime = timer.time();
         }
-        //flywheelMotor.setPower(power);
         double timeSinceStart = timer.time() - startTime;
+        //hopperServo.setPosition(up);
+        flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
-        if (timeSinceStart % Constants.SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_SERVO_ROTATION_TIME){
+        if (timeSinceStart % Constants.LOAD_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_LOAD_SERVO_ROTATION_TIME &&  timeSinceStart>Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
             //loadServo.setPosition(Constants.back);
         } else {
             //loadServo.setPosition(Constants.load);
@@ -152,7 +156,8 @@ class Robot {
     }
     private void createCalibrationInterplut(InterpLUT lut, TargetType targetType){
         //Read the files we made in CalibrateGoal/Powershot, and make an interplut out of them.
-        for (int i = Constants.MINIMUM_DISTANCE; i <= Constants.MAXIMUM_DISTANCE; i+=10) {
+        //If there are no files there, tell the rest of the class that the robot isn't calibrated.
+        for (int i = Constants.MINIMUM_DISTANCE; i <= Constants.MAXIMUM_DISTANCE; i+=Constants.CALIBRATION_INTERVAL) {
             try {
                 lut.add(i, Double.parseDouble(ReadWriteFile.readFileOrThrow(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType)+i+".txt"))));
                 isCalibrated = true;

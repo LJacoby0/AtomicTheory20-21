@@ -30,12 +30,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-
+@Disabled
 @TeleOp(name = "At Color", group = "Sensor")
 public class SensorColor extends OpMode {
 
@@ -44,7 +46,7 @@ public class SensorColor extends OpMode {
 
   @Override public void init() {
     //Get the sensor from the HardwareMap
-    colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+    //colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
     /*Gain is the amount that all incoming values are increased with.
     If sensor values are too low, this should be increased, and vice versa.*/
     float gain = 2;

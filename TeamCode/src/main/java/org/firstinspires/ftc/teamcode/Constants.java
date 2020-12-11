@@ -27,12 +27,20 @@ class Constants {
     public static final Target bluePowershot3 = new Target(42,TargetType.POWERSHOT);
     public static final Target blueTopGoal = new Target(60, TargetType.GOAL);
 
-    // DISTANCE CONSTANTS
+    // CALIBRATION CONSTANTS
     public static final int MINIMUM_DISTANCE = 60;
-    public static final int MAXIMUM_DISTANCE = 140;
+    public static final int MAXIMUM_DISTANCE = 120;
+    public static final int CALIBRATION_INTERVAL = 10;
 
     // SERVO CONSTANTS
-    public static final int SERVO_ROTATION_TIME_MILLISECONDS = 700;
+    //The rotation times are definitely less than I have them as here, tuning is needed
+    public static final int LOAD_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
     //This is just a best practice, it could also just be put in the one file we need it in (AdvancedTeleOp)
-    public static final int HALF_SERVO_ROTATION_TIME = SERVO_ROTATION_TIME_MILLISECONDS / 2;
+    public static final int HALF_LOAD_SERVO_ROTATION_TIME = LOAD_SERVO_ROTATION_TIME_MILLISECONDS / 2;
+    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
+    public static final double LOAD = 1;
+    public static final double UNLOAD = 0;
+    public static final double HOPPER_UP = 1;
+    public static final double HOPPER_DOWN = 0;
+
 }
