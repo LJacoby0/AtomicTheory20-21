@@ -7,7 +7,7 @@ class Constants {
     public static final float DRIVE_POWER_SLOW = .4f;
     public static final float DRIVE_STICK_THRESHOLD = .3f;
     public static final float TRIGGER_THRESHOLD = .65f;
-    public static final float FLYWHEEL_CONSTANT = .5f;
+    public static final float FLYWHEEL_CONSTANT = 1;
 
 
     // ODOMETRY CONSTANTS
@@ -38,9 +38,14 @@ class Constants {
     //This is just a best practice, it could also just be put in the one file we need it in (AdvancedTeleOp)
     public static final int HALF_LOAD_SERVO_ROTATION_TIME = LOAD_SERVO_ROTATION_TIME_MILLISECONDS / 2;
     public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
-    public static final double LOAD = 1;
-    public static final double UNLOAD = 0;
-    public static final double HOPPER_UP = 1;
-    public static final double HOPPER_DOWN = 0;
+    public static final double HAMMER_OUT = .95;
+    public static final double HAMMER_IN = .67;
+    public static final double HOPPER_UP = .785;
+    public static final double HOPPER_DOWN = .95;
+    public static final double COLOR_SERVO_DOWN = .17;
+    public static final double COLOR_SERVO_UP = .11;
+
+
+
 
 }

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.drawable.Drawable;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
@@ -28,6 +29,7 @@ public class RemoteTeleOp extends OpMode {
     public void loop() {
         driveChassis();
         shootTarget();
+        moveHopper();
         telemetry.addData("Status", "Looping");
         telemetry.update();
     }
@@ -36,16 +38,21 @@ public class RemoteTeleOp extends OpMode {
 
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
-        if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
-            if (!triggerWasDown) {
-                triggerWasDown = true;
-                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true);
-            } else {
-                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, false);
-            }
+        if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
+            rb.flywheelMotor.setPower(Constants.FLYWHEEL_CONSTANT);
         } else {
-            triggerWasDown = false;
+            rb.flywheelMotor.setPower(0);
         }
+
+//            if (!triggerWasDown) {
+//                triggerWasDown = true;
+//                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true);
+//            } else {
+//                rb.shoot(0, elapsedTime, false);
+//            }
+//        } else {
+//            triggerWasDown = false;
+//        }
     }
 
         private void driveChassis () {
@@ -64,5 +71,38 @@ public class RemoteTeleOp extends OpMode {
             } else {
                 rb.driveStop();
             }
+        }
+
+        boolean hammerin;
+        boolean hopperup;
+
+        //was being kind of funky, seemed to be 'thinking' so probably an issue with it reading repeated presses
+        //look up "debouncing"
+        private void moveHopper(){
+            if(gamepad2.x){
+                if(hopperup){
+                    hopperup = false;
+                    rb.hopper_rotate.setPosition(Constants.HOPPER_DOWN);
+                } else if (!hopperup){
+                    hopperup = true;
+                    rb.hopper_rotate.setPosition(Constants.HOPPER_UP);
+                } else{
+                    telemetry.addData("panic:", "hopper");
+                }
+                telemetry.addData("keypressed:", "x");
+            }
+            if(gamepad2.y){
+                if(hammerin){
+                    hammerin = false;
+                    rb.hopper_hammer.setPosition(Constants.HAMMER_OUT);
+                } else if(!hammerin){
+                    hammerin = true;
+                    rb.hopper_hammer.setPosition(Constants.HAMMER_IN);
+                } else{
+                    telemetry.addData("panic:", "hammer");
+                }
+                telemetry.addData("keypressed:", "y");
+            }
+            telemetry.update();
         }
     }

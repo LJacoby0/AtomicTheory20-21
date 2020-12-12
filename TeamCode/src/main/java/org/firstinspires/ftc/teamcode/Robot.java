@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -26,6 +27,9 @@ class Robot {
     InterpLUT goalLut = new InterpLUT();
     InterpLUT powershotLut = new InterpLUT();
     static boolean isCalibrated = true;
+    Servo sensor_servo;
+    Servo hopper_rotate;
+    Servo hopper_hammer;
 
     public Robot(Telemetry telemetry){
         this.telemetry = telemetry;
@@ -40,6 +44,10 @@ class Robot {
         //leftEncoder = hardwareMap.get(DcMotor.class, "odol");
         //middleEncoder = hardwareMap.get(DcMotor.class, "odom");
         //rightEncoder = hardwareMap.get(DcMotor.class, "odor");
+
+        sensor_servo = hardwareMap.get(Servo.class, "sensor_servo");
+        hopper_rotate = hardwareMap.get(Servo.class, "hopper_rotate");
+        hopper_hammer = hardwareMap.get(Servo.class, "hopper_hammer");
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -169,4 +177,5 @@ class Robot {
             }
         }
     }
+
 }
