@@ -72,7 +72,14 @@ class Robot {
     }
 
 
-    
+    /**
+     * The basic teleOp driving math.
+     * @param leftStickX The x coordinate of the left stick.
+     * @param leftStickY The y coordinate of the left stick, FLIPPED.
+     * @param rightStickX The x coordinate of the right stick.
+     * @param sensitivity The amount of sensitivity to use, ranging from 0 to 1.
+     *                    all powers are made into proportions of 1, then multiplied by this.
+     */
     void drive(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
         //Use math to figure out the correct powers for each wheel
         double flPower = (leftStickX + leftStickY + rightStickX);
@@ -106,17 +113,21 @@ class Robot {
 
     static double startTime;
 
-    //This uses calibrated values to shoot. If the robot does not have calibrated values, it defaults back
-    //to the value set in Constants.FLYWHEEL_CONSTANT.
-    //It should be used in almost all autonomous and TeleOp opmodes
+
+
+    /**
+     * This uses calibrated values to shoot. If the robot does not have calibrated values, it defaults back
+     * to the value set in Constants.FLYWHEEL_CONSTANT.
+     * It should be used in almost all autonomous and TeleOp opmodes.
+     * @param pose The current pose of the robot.
+     * @param target The target the robot is aiming at.
+     * @param timer An ElapsedTime object initialized in milliseconds.
+     * @param isFirst Whether or not this is the first time this is being called.
+     */
     void aimAndShoot(Pose2d pose, Target target, ElapsedTime timer, boolean isFirst){
         double power;
         if (isCalibrated){
-            if (target.getTargetType() == TargetType.GOAL){
-                power = goalLut.get(getDistanceFromTarget(pose, target));
-            } else {
-                power = powershotLut.get(getDistanceFromTarget(pose, target));
-            }
+            power = getLaunchPower(pose, target);
         } else {
             power = Constants.FLYWHEEL_CONSTANT;
         }
@@ -129,17 +140,22 @@ class Robot {
             startTime = timer.time();
         }
         double timeSinceStart = timer.time() - startTime;
-        //hopperServo.setPosition(up);
+        //hopperServo.setPosition(Constants.HOPPER_UP);
         flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
         if (timeSinceStart % Constants.LOAD_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_LOAD_SERVO_ROTATION_TIME &&  timeSinceStart>Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
-            //loadServo.setPosition(Constants.back);
+            //loadServo.setPosition(Constants.HAMMER_OUT);
         } else {
-            //loadServo.setPosition(Constants.load);
+            //loadServo.setPosition(Constants.HAMMER_IN);
         }
     }
 
-    //Gets the distance from the target with Math.hypot between the robot and the target positional constants
+    /**
+     *
+     * @param pose The current pose of the robot.
+     * @param target The target the robot is aiming at.
+     * @return The distance of the robot from the target in inches.
+     */
     public double getDistanceFromTarget (Pose2d pose, Target target){
         double currentX = pose.getX();
         double currentY = pose.getY();
@@ -147,8 +163,34 @@ class Robot {
         double yDistance = 120 - currentY;
         return Math.hypot(xDistance, yDistance);
     }
-    // This gets the correct launch angle for a target based off an average of the two nearest files which were stored during calibration.
-    public double getLaunchPower(Target target, Pose2d pose) {
+
+    /**
+     * Gets the angle that the robot should aim at to hit a specific target
+     * @param pose The current pose of the robot.
+     * @param target The target the robot is aiming at.
+     * @return The ideal angle of the robot, in RADIANS. For degrees use getDegreesToTarget.
+     */
+    public double getAngleToTarget (Pose2d pose, Target target) {
+        double currentX = pose.getX();
+        double currentY = pose.getY();
+        double xDistance = Math.abs(currentX - target.getX());
+        double yDistance = 120 - currentY;
+        //If you remember your trig, the tangent of an angle is its opposite over its adjacent
+        //Arctan, the inverse of tangent, gets an angle from a given opposite over adjacent.
+        return Math.atan(yDistance/xDistance);
+    }
+    public double getDegreesToTarget(Pose2d pose, Target target) {
+        return Math.toDegrees(getAngleToTarget(pose, target));
+    }
+
+    /**
+     * This gets the correct launch angle for a target based off
+     * an average of the two nearest files which were stored during calibration.
+     * @param pose The current pose of the robot.
+     * @param target The target the robot is aiming at.
+     * @return The correct power to use from a given point aiming at a specific target.
+     */
+    public double getLaunchPower(Pose2d pose, Target target) {
         //If we're shooting at a goal, get it from the goal interplut, otherwise get it from the powershot. The other one is just a sanity check.
         if (target.getTargetType() == TargetType.GOAL){
             return goalLut.get(getDistanceFromTarget(pose, target));
