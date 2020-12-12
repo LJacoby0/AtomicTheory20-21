@@ -73,36 +73,17 @@ public class RemoteTeleOp extends OpMode {
             }
         }
 
-        boolean hammerin;
-        boolean hopperup;
-
-        //was being kind of funky, seemed to be 'thinking' so probably an issue with it reading repeated presses
-        //look up "debouncing"
+        //had to put on different buttons because of debouncing (thought of repeated button press)
         private void moveHopper(){
-            if(gamepad2.x){
-                if(hopperup){
-                    hopperup = false;
-                    rb.hopper_rotate.setPosition(Constants.HOPPER_DOWN);
-                } else if (!hopperup){
-                    hopperup = true;
-                    rb.hopper_rotate.setPosition(Constants.HOPPER_UP);
-                } else{
-                    telemetry.addData("panic:", "hopper");
-                }
-                telemetry.addData("keypressed:", "x");
+            if(gamepad2.x) {
+                rb.hopper_rotate.setPosition(Constants.HOPPER_DOWN);
+            } else if(gamepad2.y) {
+                rb.hopper_rotate.setPosition(Constants.HOPPER_UP);
             }
-            if(gamepad2.y){
-                if(hammerin){
-                    hammerin = false;
-                    rb.hopper_hammer.setPosition(Constants.HAMMER_OUT);
-                } else if(!hammerin){
-                    hammerin = true;
-                    rb.hopper_hammer.setPosition(Constants.HAMMER_IN);
-                } else{
-                    telemetry.addData("panic:", "hammer");
-                }
-                telemetry.addData("keypressed:", "y");
+            if(gamepad2.right_bumper) {
+                rb.hopper_hammer.setPosition(Constants.HAMMER_IN);
+            } else if(gamepad2.left_bumper) {
+                rb.hopper_hammer.setPosition(Constants.HAMMER_OUT);
             }
-            telemetry.update();
         }
     }
