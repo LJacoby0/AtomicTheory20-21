@@ -6,6 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class LoadTest extends ServoTest{
     @Override
     public String getServoName() {
-        return "load";
+        return "hopper_hammer";
     }
 }
