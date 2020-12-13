@@ -66,7 +66,7 @@ class Robot {
         //flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Create the calibration tables from previously created files that will be used throughout the match.
-        //This means we only have to read from the files once, increasing performance
+        //This means we only have to read from the files once, increasing performance (I think?)
         createCalibrationInterplut(goalLut, TargetType.GOAL);
         createCalibrationInterplut(powershotLut, TargetType.POWERSHOT);
     }
@@ -92,7 +92,7 @@ class Robot {
         //If the maxPower is less than 1, make it 1
         maxPower = Math.max(maxPower, 1);
 
-        //Make all of them proportional to the greatest value and factor in slow mode.
+        //Make all of them proportional to the greatest value and factor in the sensitivity.
         flPower = (flPower / maxPower) * sensitivity;
         frPower = (frPower / maxPower) * sensitivity;
         blPower = (blPower / maxPower) * sensitivity;
@@ -135,6 +135,13 @@ class Robot {
     }
     //This is the basic shoot command. It only shoots, and is used directly only in calibration,
     //though it is called indirectly in aimAndShoot. It shouldn't be used directly in most opModes.
+
+    /** This is the basic shoot command. It only shoots, and is used directly only in calibration,
+     * though it can be called indirectly in aimAndShoot. It shouldn't be used directly in most opModes, use AimAndShoot instead.
+     * @param power The power to shoot with, from 0 to 1.
+     * @param timer An ElapsedTime object initialized in milliseconds.
+     * @param isFirst Whether or not this is the first time this is being called.
+     */
     void shoot(double power, ElapsedTime timer, boolean isFirst){
         if (isFirst) {
             startTime = timer.time();
@@ -151,7 +158,8 @@ class Robot {
     }
 
     /**
-     *
+     * Gets the current distance from the target. Shouldn't be called directly in most opModes,
+     * but it's used by getLaunchPower(), and therefore by aimAndShoot().
      * @param pose The current pose of the robot.
      * @param target The target the robot is aiming at.
      * @return The distance of the robot from the target in inches.
@@ -165,7 +173,7 @@ class Robot {
     }
 
     /**
-     * Gets the angle that the robot should aim at to hit a specific target
+     * Gets the direction that the robot should aim towards to hit a specific target. This one isn't used yet.
      * @param pose The current pose of the robot.
      * @param target The target the robot is aiming at.
      * @return The ideal angle of the robot, in RADIANS. For degrees use getDegreesToTarget.
@@ -179,12 +187,19 @@ class Robot {
         //Arctan, the inverse of tangent, gets an angle from a given opposite over adjacent.
         return Math.atan(yDistance/xDistance);
     }
+    /**
+     * Gets the direction that the robot should aim towards to hit a specific target.
+     * Just outputs getAngleToTarget converted to degrees.
+     * @param pose The current pose of the robot.
+     * @param target The target the robot is aiming at.
+     * @return The ideal angle of the robot, in DEGREES. For radians use getAngleToTarget.
+     */
     public double getDegreesToTarget(Pose2d pose, Target target) {
         return Math.toDegrees(getAngleToTarget(pose, target));
     }
 
     /**
-     * This gets the correct launch angle for a target based off
+     * This gets the correct launch power for a target based off
      * an average of the two nearest files which were stored during calibration.
      * @param pose The current pose of the robot.
      * @param target The target the robot is aiming at.
