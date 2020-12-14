@@ -37,20 +37,16 @@ public class RemoteTeleOp extends OpMode {
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
         if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
-            rb.flywheelMotor.setPower(Constants.FLYWHEEL_CONSTANT);
+            if (!triggerWasDown) {
+                triggerWasDown = true;
+                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true);
+            } else {
+                rb.shoot(0, elapsedTime, false);
+            }
         } else {
-            rb.flywheelMotor.setPower(0);
+            triggerWasDown = false;
+            rb.stopFlywheel();
         }
-
-//            if (!triggerWasDown) {
-//                triggerWasDown = true;
-//                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true);
-//            } else {
-//                rb.shoot(0, elapsedTime, false);
-//            }
-//        } else {
-//            triggerWasDown = false;
-//        }
     }
 
         private void driveChassis () {

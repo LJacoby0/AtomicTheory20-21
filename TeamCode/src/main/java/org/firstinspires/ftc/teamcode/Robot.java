@@ -147,13 +147,13 @@ class Robot {
             startTime = timer.time();
         }
         double timeSinceStart = timer.time() - startTime;
-        //hopperServo.setPosition(Constants.HOPPER_UP);
+        hopperRotate.setPosition(Constants.HOPPER_UP);
         flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
         if (timeSinceStart % Constants.LOAD_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_LOAD_SERVO_ROTATION_TIME &&  timeSinceStart>Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
-            //loadServo.setPosition(Constants.HAMMER_OUT);
+            hopperHammer.setPosition(Constants.HAMMER_OUT);
         } else {
-            //loadServo.setPosition(Constants.HAMMER_IN);
+            hopperHammer.setPosition(Constants.HAMMER_IN);
         }
     }
     void stopFlywheel(){
