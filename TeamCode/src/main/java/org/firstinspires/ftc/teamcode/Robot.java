@@ -28,8 +28,8 @@ class Robot {
     InterpLUT powershotLut = new InterpLUT();
     static boolean isCalibrated = true;
     Servo sensor_servo;
-    Servo hopper_rotate;
-    Servo hopper_hammer;
+    Servo hopperRotate;
+    Servo hopperHammer;
 
     public Robot(Telemetry telemetry){
         this.telemetry = telemetry;
@@ -46,8 +46,8 @@ class Robot {
         //rightEncoder = hardwareMap.get(DcMotor.class, "odor");
 
         sensor_servo = hardwareMap.get(Servo.class, "sensor_servo");
-        hopper_rotate = hardwareMap.get(Servo.class, "hopper_rotate");
-        hopper_hammer = hardwareMap.get(Servo.class, "hopper_hammer");
+        hopperRotate = hardwareMap.get(Servo.class, "hopper_rotate");
+        hopperHammer = hardwareMap.get(Servo.class, "hopper_hammer");
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -155,6 +155,9 @@ class Robot {
         } else {
             //loadServo.setPosition(Constants.HAMMER_IN);
         }
+    }
+    void stopFlywheel(){
+        flywheelMotor.setPower(0);
     }
 
     /**

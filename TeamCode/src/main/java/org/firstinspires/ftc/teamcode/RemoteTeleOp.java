@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.drawable.Drawable;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,7 +32,7 @@ public class RemoteTeleOp extends OpMode {
         telemetry.update();
     }
 
-    boolean triggerWasDown;
+    static boolean triggerWasDown;
 
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
@@ -76,14 +74,14 @@ public class RemoteTeleOp extends OpMode {
         //had to put on different buttons because of debouncing (thought of repeated button press)
         private void moveHopper(){
             if(gamepad2.x) {
-                rb.hopper_rotate.setPosition(Constants.HOPPER_DOWN);
+                rb.hopperRotate.setPosition(Constants.HOPPER_DOWN);
             } else if(gamepad2.y) {
-                rb.hopper_rotate.setPosition(Constants.HOPPER_UP);
+                rb.hopperRotate.setPosition(Constants.HOPPER_UP);
             }
             if(gamepad2.right_bumper) {
-                rb.hopper_hammer.setPosition(Constants.HAMMER_IN);
+                rb.hopperHammer.setPosition(Constants.HAMMER_IN);
             } else if(gamepad2.left_bumper) {
-                rb.hopper_hammer.setPosition(Constants.HAMMER_OUT);
+                rb.hopperHammer.setPosition(Constants.HAMMER_OUT);
             }
         }
     }
