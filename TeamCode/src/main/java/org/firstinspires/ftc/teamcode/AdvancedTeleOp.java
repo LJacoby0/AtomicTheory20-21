@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
@@ -15,8 +16,18 @@ import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 @TeleOp(name = "Advanced TeleOp", group = "Remote")
 public class AdvancedTeleOp extends OpMode {
     private Robot rb = new Robot(telemetry);
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     StandardTrackingWheelLocalizer myLocalizer = new StandardTrackingWheelLocalizer(hardwareMap);
+
+
+    int targetInt = 0;
+    //Debouncing variables
+    boolean rbWasDown;
+    boolean lbWasDown;
+    boolean triggerWasDown;
+    //Makes a list of the targets which will be cycled through
+    Target[] targets = new Target[]{Constants.redTopGoal, Constants.redPowershot1, Constants.redPowershot2, Constants.bluePowershot3};
 
     @Override
     public void init() {
@@ -38,12 +49,6 @@ public class AdvancedTeleOp extends OpMode {
         myLocalizer.update();
     }
 
-    int targetInt = 0;
-    boolean rbWasDown;
-    boolean lbWasDown;
-    boolean triggerWasDown;
-    Target[] targets = new Target[]{Constants.blueTopGoal, Constants.bluePowershot1, Constants.bluePowershot2, Constants.bluePowershot3};
-
     private void shootTarget() {
         //This code cycles through the target list using the bumpers
         if (gamepad1.right_bumper) {
@@ -62,19 +67,25 @@ public class AdvancedTeleOp extends OpMode {
         } else {
             lbWasDown = false;
         }
+        //Makes the target list wrap around.
         if (targetInt<0){
             targetInt = targets.length-1;
         } else if (targetInt>targets.length-1){
             targetInt = 0;
         }
-        telemetry.addData("Current Target:", targets[targetInt]);
+        Target currentTarget = targets[targetInt];
+        Pose2d currentPosition = myLocalizer.getPoseEstimate();
+        telemetry.addData("Current Target:", currentTarget);
         //This tells the command whether or not it's the first time the button has been pressed.
         if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
-                rb.aimAndShoot(myLocalizer.getPoseEstimate(), targets[targetInt], elapsedTime, true);
+                //This feature is HIGHLY EXPERIMENTAL, even for this opMode. Do not comment it back in unless you know what you are doing.
+//                double angleDifference = currentPosition.getHeading() - rb.getAngleToTarget(currentPosition, currentTarget);
+//                drive.turnAsync(angleDifference);
+                rb.aimAndShoot(currentPosition, currentTarget, elapsedTime, true);
             } else {
-                rb.aimAndShoot(myLocalizer.getPoseEstimate(), targets[targetInt], elapsedTime, false);
+                rb.aimAndShoot(currentPosition, currentTarget, elapsedTime, false);
             }
         } else {
             triggerWasDown = false;
