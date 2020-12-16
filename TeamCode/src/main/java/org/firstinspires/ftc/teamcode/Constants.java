@@ -5,7 +5,7 @@ class Constants {
     // DRIVING CONSTANTS
     public static final float DRIVE_POWER = 1;
     public static final float DRIVE_POWER_SLOW = .4f;
-    public static final float DRIVE_STICK_THRESHOLD = .3f;
+    public static final float DRIVE_STICK_THRESHOLD = .2f;
     public static final float TRIGGER_THRESHOLD = .65f;
     public static final float FLYWHEEL_CONSTANT = 1;
 
@@ -18,13 +18,13 @@ class Constants {
 
     // TARGET CONSTANTS
     // These need to be changed
-    public static final Target redPowershot1 = new Target(30,TargetType.POWERSHOT);
-    public static final Target redPowershot2 = new Target(36,TargetType.POWERSHOT);
-    public static final Target redPowershot3 = new Target(42,TargetType.POWERSHOT);
+    public static final Target redPowershot1 = new Target(30, TargetType.POWERSHOT);
+    public static final Target redPowershot2 = new Target(36, TargetType.POWERSHOT);
+    public static final Target redPowershot3 = new Target(42, TargetType.POWERSHOT);
     public static final Target redTopGoal = new Target(60, TargetType.GOAL);
-    public static final Target bluePowershot1 = new Target(30,TargetType.POWERSHOT);
-    public static final Target bluePowershot2 = new Target(36,TargetType.POWERSHOT);
-    public static final Target bluePowershot3 = new Target(42,TargetType.POWERSHOT);
+    public static final Target bluePowershot1 = new Target(30, TargetType.POWERSHOT);
+    public static final Target bluePowershot2 = new Target(36, TargetType.POWERSHOT);
+    public static final Target bluePowershot3 = new Target(42, TargetType.POWERSHOT);
     public static final Target blueTopGoal = new Target(60, TargetType.GOAL);
 
     // CALIBRATION CONSTANTS
@@ -34,10 +34,10 @@ class Constants {
 
     // SERVO CONSTANTS
     //The rotation times are definitely less than I have them as here, tuning is needed
-    public static final int LOAD_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
+    public static final int HAMMER_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
     //This is just a best practice, it could also just be put in the one file we need it in (AdvancedTeleOp)
-    public static final int HALF_LOAD_SERVO_ROTATION_TIME = LOAD_SERVO_ROTATION_TIME_MILLISECONDS / 2;
-    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
+    public static final int HALF_HAMMER_SERVO_ROTATION_TIME = HAMMER_SERVO_ROTATION_TIME_MILLISECONDS / 2;
+    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 1;
     public static final double HAMMER_OUT = .95;
     public static final double HAMMER_IN = .67;
     public static final double HOPPER_UP = .785;

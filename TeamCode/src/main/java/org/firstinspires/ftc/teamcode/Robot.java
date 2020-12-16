@@ -63,7 +63,7 @@ class Robot {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Create the calibration tables from previously created files that will be used throughout the match.
         //This means we only have to read from the files once, increasing performance (I think?)
@@ -131,7 +131,7 @@ class Robot {
         } else {
             power = Constants.FLYWHEEL_CONSTANT;
         }
-        shoot(power, timer, isFirst);
+        shoot(power, timer, isFirst, false);
     }
     //This is the basic shoot command. It only shoots, and is used directly only in calibration,
     //though it is called indirectly in aimAndShoot. It shouldn't be used directly in most opModes.
@@ -142,7 +142,7 @@ class Robot {
      * @param timer An ElapsedTime object initialized in milliseconds.
      * @param isFirst Whether or not this is the first time this is being called.
      */
-    void shoot(double power, ElapsedTime timer, boolean isFirst){
+    void shoot(double power, ElapsedTime timer, boolean isFirst, boolean isManual){
         if (isFirst) {
             startTime = timer.time();
         }
@@ -150,11 +150,14 @@ class Robot {
         hopperRotate.setPosition(Constants.HOPPER_UP);
         flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
-        if (timeSinceStart % Constants.LOAD_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_LOAD_SERVO_ROTATION_TIME &&  timeSinceStart>Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
-            hopperHammer.setPosition(Constants.HAMMER_OUT);
-        } else {
-            hopperHammer.setPosition(Constants.HAMMER_IN);
+        if (!isManual){
+            if (timeSinceStart % Constants.HAMMER_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart>Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
+                hopperHammer.setPosition(Constants.HAMMER_OUT);
+            } else {
+                hopperHammer.setPosition(Constants.HAMMER_IN);
+            }
         }
+
     }
     void stopFlywheel(){
         flywheelMotor.setPower(0);
@@ -237,5 +240,4 @@ class Robot {
             }
         }
     }
-
 }

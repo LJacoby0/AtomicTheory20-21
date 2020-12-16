@@ -39,10 +39,9 @@ public class RemoteTeleOp extends OpMode {
         if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
-                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true);
-            } else {
-                rb.shoot(0, elapsedTime, false);
+                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
             }
+                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, false, isManual);
         } else {
             triggerWasDown = false;
             rb.stopFlywheel();
@@ -68,16 +67,24 @@ public class RemoteTeleOp extends OpMode {
         }
 
         //had to put on different buttons because of debouncing (thought of repeated button press)
+    static boolean isManual = false;
         private void moveHopper(){
-            if(gamepad2.x) {
-                rb.hopperRotate.setPosition(Constants.HOPPER_DOWN);
-            } else if(gamepad2.y) {
-                rb.hopperRotate.setPosition(Constants.HOPPER_UP);
-            }
             if(gamepad2.right_bumper) {
-                rb.hopperHammer.setPosition(Constants.HAMMER_IN);
-            } else if(gamepad2.left_bumper) {
-                rb.hopperHammer.setPosition(Constants.HAMMER_OUT);
+                isManual = true;
+            } else if (gamepad2.left_bumper){
+                isManual = false;
+            }
+            if (isManual){
+                if(gamepad2.x) {
+                    rb.hopperRotate.setPosition(Constants.HOPPER_DOWN);
+                } else if(gamepad2.y) {
+                    rb.hopperRotate.setPosition(Constants.HOPPER_UP);
+                }
+                if(gamepad2.right_bumper) {
+                    rb.hopperHammer.setPosition(Constants.HAMMER_IN);
+                } else if(gamepad2.left_bumper) {
+                    rb.hopperHammer.setPosition(Constants.HAMMER_OUT);
+                }
             }
         }
     }

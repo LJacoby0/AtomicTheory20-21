@@ -52,9 +52,9 @@ public abstract class CalibratePower extends OpMode {
             if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
                 if (!triggerWasDown) {
                     triggerWasDown = true;
-                    rb.shoot(launchPower, elapsedTime,true);
+                    rb.shoot(launchPower, elapsedTime,true, false);
                 } else {
-                    rb.shoot(launchPower, elapsedTime,false);
+                    rb.shoot(launchPower, elapsedTime,false, false);
                 }
             } else {
                 triggerWasDown = false;
