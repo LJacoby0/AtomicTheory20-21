@@ -147,20 +147,32 @@ class Robot {
             startTime = timer.time();
         }
         double timeSinceStart = timer.time() - startTime;
-        hopperRotate.setPosition(Constants.HOPPER_UP);
+        hopperUp();
         flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
         if (!isManual){
-            if (timeSinceStart % Constants.HAMMER_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HALF_HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart>Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
-                hopperHammer.setPosition(Constants.HAMMER_OUT);
+            if (Constants.DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS % timeSinceStart> Constants.HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart > Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
+                hammerOut();
             } else {
-                hopperHammer.setPosition(Constants.HAMMER_IN);
+                hammerIn();
             }
         }
 
     }
     void stopFlywheel(){
         flywheelMotor.setPower(0);
+    }
+    void hopperDown(){
+        hopperRotate.setPosition(Constants.HOPPER_DOWN);
+    }
+    void hopperUp(){
+        hopperRotate.setPosition(Constants.HOPPER_UP);
+    }
+    void hammerIn(){
+        hopperHammer.setPosition(Constants.HAMMER_IN);
+    }
+    void hammerOut(){
+        hopperHammer.setPosition(Constants.HAMMER_OUT);
     }
 
     /**
@@ -213,6 +225,7 @@ class Robot {
      */
     public double getLaunchPower(Pose2d pose, Target target) {
         //If we're shooting at a goal, get it from the goal interplut, otherwise get it from the powershot. The other one is just a sanity check.
+        //Android Studio made me do it, though it should be impossible to come across.
         if (target.getTargetType() == TargetType.GOAL){
             return goalLut.get(getDistanceFromTarget(pose, target));
         } else if(target.getTargetType() == TargetType.POWERSHOT){

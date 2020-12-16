@@ -34,10 +34,9 @@ class Constants {
 
     // SERVO CONSTANTS
     //The rotation times are definitely less than I have them as here, tuning is needed
-    public static final int HAMMER_SERVO_ROTATION_TIME_MILLISECONDS = 1000;
-    //This is just a best practice, it could also just be put in the one file we need it in (AdvancedTeleOp)
-    public static final int HALF_HAMMER_SERVO_ROTATION_TIME = HAMMER_SERVO_ROTATION_TIME_MILLISECONDS / 2;
-    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 1;
+    public static final int HAMMER_SERVO_ROTATION_TIME = 750;
+    public static final int DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS = 2*HAMMER_SERVO_ROTATION_TIME;
+    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 750;
     public static final double HAMMER_OUT = .95;
     public static final double HAMMER_IN = .67;
     public static final double HOPPER_UP = .785;

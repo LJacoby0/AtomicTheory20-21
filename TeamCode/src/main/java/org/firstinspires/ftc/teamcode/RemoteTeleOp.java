@@ -45,9 +45,12 @@ public class RemoteTeleOp extends OpMode {
         } else {
             triggerWasDown = false;
             rb.stopFlywheel();
+            //If it's in automatic mode, the hopper needs to be told to go down while it's not pressed.
+            if (!isManual){
+                rb.hopperDown();
+            }
         }
     }
-
         private void driveChassis () {
             float leftStickY = -gamepad1.left_stick_y;
             float leftStickX = gamepad1.left_stick_x;
@@ -76,14 +79,14 @@ public class RemoteTeleOp extends OpMode {
             }
             if (isManual){
                 if(gamepad2.x) {
-                    rb.hopperRotate.setPosition(Constants.HOPPER_DOWN);
+                    rb.hopperDown();
                 } else if(gamepad2.y) {
-                    rb.hopperRotate.setPosition(Constants.HOPPER_UP);
+                    rb.hopperUp();
                 }
                 if(gamepad2.right_bumper) {
-                    rb.hopperHammer.setPosition(Constants.HAMMER_IN);
+                    rb.hammerIn();
                 } else if(gamepad2.left_bumper) {
-                    rb.hopperHammer.setPosition(Constants.HAMMER_OUT);
+                    rb.hammerOut();
                 }
             }
         }
