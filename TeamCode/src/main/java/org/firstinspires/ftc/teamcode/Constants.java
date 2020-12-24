@@ -34,13 +34,13 @@ class Constants {
 
     // SERVO CONSTANTS
     //The rotation times are definitely less than I have them as here, tuning is needed
-    public static final int HAMMER_SERVO_ROTATION_TIME = 750;
+    public static final int HAMMER_SERVO_ROTATION_TIME = 600;
     public static final int DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS = 2*HAMMER_SERVO_ROTATION_TIME;
-    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 750;
-    public static final double HAMMER_OUT = .95;
-    public static final double HAMMER_IN = .67;
+    public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 350;
+    public static final double HAMMER_OUT = .67;
+    public static final double HAMMER_IN = .95;
     public static final double HOPPER_UP = .785;
-    public static final double HOPPER_DOWN = .95;
+    public static final double HOPPER_DOWN = .915;
     public static final double COLOR_SERVO_DOWN = .17;
     public static final double COLOR_SERVO_UP = .11;
 

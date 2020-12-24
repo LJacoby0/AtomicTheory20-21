@@ -16,7 +16,7 @@ public class RoadRunnerPark extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startingPose = new Pose2d(-62, 50, Math.toRadians(90));
-        Trajectory newTrajectory = drive.trajectoryBuilder(new Pose2d())
+        Trajectory newTrajectory = drive.trajectoryBuilder(startingPose)
                 .splineTo(new Vector2d(6, 50), Math.toRadians(90))
                 .build();
         waitForStart();

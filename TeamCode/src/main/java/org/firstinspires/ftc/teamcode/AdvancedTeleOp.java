@@ -26,8 +26,8 @@ public class AdvancedTeleOp extends OpMode {
     boolean rbWasDown;
     boolean lbWasDown;
     boolean triggerWasDown;
-    //Makes a list of the targets which will be cycled through
-    Target[] targets = new Target[]{Constants.redTopGoal, Constants.redPowershot1, Constants.redPowershot2, Constants.bluePowershot3};
+    //Makes a list of theea targets which will be cycled through
+    Target[] targets = new Target[]{Constants.redTopGoal, Constants.redPowershot1, Constants.redPowershot2, Constants.redPowershot3};
 
     @Override
     public void init() {

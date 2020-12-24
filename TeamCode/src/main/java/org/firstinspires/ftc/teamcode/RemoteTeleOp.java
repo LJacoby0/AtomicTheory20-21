@@ -36,7 +36,7 @@ public class RemoteTeleOp extends OpMode {
 
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
-        if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
+        if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
                 rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
@@ -48,6 +48,7 @@ public class RemoteTeleOp extends OpMode {
             //If it's in automatic mode, the hopper needs to be told to go down while it's not pressed.
             if (!isManual){
                 rb.hopperDown();
+                rb.hopperHammer.setPosition(Constants.HAMMER_IN);
             }
         }
     }
@@ -72,20 +73,20 @@ public class RemoteTeleOp extends OpMode {
         //had to put on different buttons because of debouncing (thought of repeated button press)
     static boolean isManual = false;
         private void moveHopper(){
-            if(gamepad2.right_bumper) {
+            if(gamepad1.right_bumper) {
                 isManual = true;
-            } else if (gamepad2.left_bumper){
+            } else if (gamepad1.left_bumper){
                 isManual = false;
             }
             if (isManual){
-                if(gamepad2.x) {
+                if(gamepad1.x) {
                     rb.hopperDown();
-                } else if(gamepad2.y) {
+                } else if(gamepad1.y) {
                     rb.hopperUp();
                 }
-                if(gamepad2.right_bumper) {
+                if(gamepad1.right_bumper) {
                     rb.hammerIn();
-                } else if(gamepad2.left_bumper) {
+                } else if(gamepad1.left_bumper) {
                     rb.hammerOut();
                 }
             }

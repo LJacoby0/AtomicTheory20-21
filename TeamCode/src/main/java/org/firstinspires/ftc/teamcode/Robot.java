@@ -41,9 +41,9 @@ class Robot {
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
         flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
-        //leftEncoder = hardwareMap.get(DcMotor.class, "odol");
-        //middleEncoder = hardwareMap.get(DcMotor.class, "odom");
-        //rightEncoder = hardwareMap.get(DcMotor.class, "odor");
+        leftEncoder = hardwareMap.get(DcMotor.class, "odol");
+        middleEncoder = hardwareMap.get(DcMotor.class, "odom");
+        rightEncoder = hardwareMap.get(DcMotor.class, "odor");
 
         sensor_servo = hardwareMap.get(Servo.class, "sensor_servo");
         hopperRotate = hardwareMap.get(Servo.class, "hopper_rotate");
@@ -63,6 +63,7 @@ class Robot {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //Make the flywheel run using internal PID
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Create the calibration tables from previously created files that will be used throughout the match.
@@ -78,7 +79,7 @@ class Robot {
      * @param leftStickY The y coordinate of the left stick, FLIPPED.
      * @param rightStickX The x coordinate of the right stick.
      * @param sensitivity The amount of sensitivity to use, ranging from 0 to 1.
-     *                    all powers are made into proportions of 1, then multiplied by this.
+     *                    All powers are made into proportions of 1, then multiplied by this.
      */
     void drive(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
         //Use math to figure out the correct powers for each wheel
@@ -89,8 +90,6 @@ class Robot {
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
-        //If the maxPower is less than 1, make it 1
-        maxPower = Math.max(maxPower, 1);
 
         //Make all of them proportional to the greatest value and factor in the sensitivity.
         flPower = (flPower / maxPower) * sensitivity;
@@ -144,14 +143,14 @@ class Robot {
      */
     void shoot(double power, ElapsedTime timer, boolean isFirst, boolean isManual){
         if (isFirst) {
-            startTime = timer.time();
+            timer.reset();
         }
-        double timeSinceStart = timer.time() - startTime;
+        double timeSinceStart = timer.time();
         hopperUp();
         flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
         if (!isManual){
-            if (Constants.DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS % timeSinceStart> Constants.HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart > Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
+            if (timeSinceStart % Constants.DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS> Constants.HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart > Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
                 hammerOut();
             } else {
                 hammerIn();
