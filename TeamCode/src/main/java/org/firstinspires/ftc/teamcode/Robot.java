@@ -41,8 +41,8 @@ class Robot {
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
         flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
-        //leftEncoder = hardwareMap.get(DcMotor.class, "odol");
-        //middleEncoder = hardwareMap.get(DcMotor.class, "odom");
+        leftEncoder = hardwareMap.get(DcMotor.class, "odol");
+        middleEncoder = hardwareMap.get(DcMotor.class, "odom");
         //rightEncoder = hardwareMap.get(DcMotor.class, "odor");
 
         sensor_servo = hardwareMap.get(Servo.class, "sensor_servo");
@@ -81,7 +81,7 @@ class Robot {
      *                    all powers are made into proportions of 1, then multiplied by this.
      */
     void drive(double leftStickX, double leftStickY, double rightStickX, double sensitivity) {
-        //Use math to figure out the correct powers for each wheel
+        //Use CODE and ALGORITHMS to figure out the correct powers for each wheel
         double flPower = (leftStickX + leftStickY + rightStickX);
         double frPower = (-leftStickX + leftStickY - rightStickX);
         double blPower = (-leftStickX + leftStickY + rightStickX);
@@ -89,8 +89,6 @@ class Robot {
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
-        //If the maxPower is less than 1, make it 1
-        maxPower = Math.max(maxPower, 1);
 
         //Make all of them proportional to the greatest value and factor in the sensitivity.
         flPower = (flPower / maxPower) * sensitivity;
@@ -133,8 +131,6 @@ class Robot {
         }
         shoot(power, timer, isFirst, false);
     }
-    //This is the basic shoot command. It only shoots, and is used directly only in calibration,
-    //though it is called indirectly in aimAndShoot. It shouldn't be used directly in most opModes.
 
     /** This is the basic shoot command. It only shoots, and is used directly only in calibration,
      * though it can be called indirectly in aimAndShoot. It shouldn't be used directly in most opModes, use AimAndShoot instead.
@@ -178,7 +174,7 @@ class Robot {
     /**
      * Gets the current distance from the target. Shouldn't be called directly in most opModes,
      * but it's used by getLaunchPower(), and therefore by aimAndShoot().
-     * @param pose The current pose of the robot.
+     * @param pose The current pose of the robot. Get it using [localizer].getPose()
      * @param target The target the robot is aiming at.
      * @return The distance of the robot from the target in inches.
      */
@@ -226,22 +222,22 @@ class Robot {
     public double getLaunchPower(Pose2d pose, Target target) {
         //If we're shooting at a goal, get it from the goal interplut, otherwise get it from the powershot. The other one is just a sanity check.
         //Android Studio made me do it, though it should be impossible to come across.
-        if (target.getTargetType() == TargetType.GOAL){
-            return goalLut.get(getDistanceFromTarget(pose, target));
-        } else if(target.getTargetType() == TargetType.POWERSHOT){
-            return powershotLut.get(getDistanceFromTarget(pose, target));
-        }
-        else {
-            telemetry.speak("Something's Wrong!");
-            telemetry.addData("ERROR:","No target type");
-            telemetry.update();
-            return 0;
+        switch (target.getTargetType()) {
+            case GOAL:
+                return goalLut.get(getDistanceFromTarget(pose, target));
+            case POWERSHOT:
+                return powershotLut.get(getDistanceFromTarget(pose, target));
+            default:
+                telemetry.speak("Something's Wrong!");
+                telemetry.addData("ERROR:", "No target type");
+                telemetry.update();
+                return 0;
         }
     }
     private void createCalibrationInterplut(InterpLUT lut, TargetType targetType){
         //Read the files we made in CalibrateGoal/Powershot, and make an interplut out of them.
         //If there are no files there, tell the rest of the class that the robot isn't calibrated.
-        for (int i = Constants.MINIMUM_DISTANCE; i <= Constants.MAXIMUM_DISTANCE; i+=Constants.CALIBRATION_INTERVAL) {
+        for (int i = Constants.MINIMUM_DISTANCE; i <= Constants.MAXIMUM_DISTANCE; i += Constants.CALIBRATION_INTERVAL) {
             try {
                 lut.add(i, Double.parseDouble(ReadWriteFile.readFileOrThrow(AppUtil.getInstance().getSettingsFile(String.valueOf(targetType)+i+".txt"))));
                 isCalibrated = true;
