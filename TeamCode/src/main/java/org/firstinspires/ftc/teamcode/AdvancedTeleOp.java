@@ -7,18 +7,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
 import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
-@TeleOp(name = "Advanced TeleOp", group = "Remote")
-public class AdvancedTeleOp extends OpMode {
+public abstract class                                                                       AdvancedTeleOp extends OpMode {
+    //This will return either a list of blue targets or a list of red targets
+    public abstract Target[] getTargets();
+
     private Robot rb = new Robot(telemetry);
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    StandardTrackingWheelLocalizer myLocalizer = new StandardTrackingWheelLocalizer(hardwareMap);
+    TwoWheelTrackingLocalizer myLocalizer = new TwoWheelTrackingLocalizer(hardwareMap, drive);
 
 
     int targetInt = 0;
@@ -27,7 +30,7 @@ public class AdvancedTeleOp extends OpMode {
     boolean lbWasDown;
     boolean triggerWasDown;
     //Makes a list of the targets which will be cycled through
-    Target[] targets = new Target[]{Constants.redTopGoal, Constants.redPowershot1, Constants.redPowershot2, Constants.bluePowershot3};
+    Target[] targets = getTargets();
 
     @Override
     public void init() {
