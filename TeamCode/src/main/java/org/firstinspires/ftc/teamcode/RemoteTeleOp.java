@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 public class RemoteTeleOp extends OpMode {
     private Robot rb = new Robot(telemetry);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    static boolean isManual = false;
 
     @Override
     public void init() {
@@ -29,6 +30,7 @@ public class RemoteTeleOp extends OpMode {
         shootTarget();
         moveHopper();
         telemetry.addData("Status", "Looping");
+        telemetry.addData("Manual Mode", isManual);
         telemetry.update();
     }
 
@@ -36,6 +38,7 @@ public class RemoteTeleOp extends OpMode {
 
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
+        //It also passes in whether or not we are in manual mode.
         if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
@@ -70,7 +73,6 @@ public class RemoteTeleOp extends OpMode {
         }
 
         //had to put on different buttons because of debouncing (thought of repeated button press)
-    static boolean isManual = false;
         private void moveHopper(){
             if(gamepad2.right_bumper) {
                 isManual = true;
