@@ -31,46 +31,87 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-@Disabled
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @TeleOp(name = "At Color", group = "Sensor")
 public class SensorColor extends OpMode {
-
   /** The colorSensor field will contain a reference to our color sensor hardware object */
-  NormalizedColorSensor colorSensor;
+  RevColorSensorV3 colorSensor;
+  Robot rb = new Robot(telemetry);
+  boolean leftWasDown = false;
+  boolean rightWasDown = false;
+  boolean aWasDown = false;
+  double servoPosition = .5;
 
   @Override public void init() {
-    //Get the sensor from the HardwareMap
-    //colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
-    /*Gain is the amount that all incoming values are increased with.
-    If sensor values are too low, this should be increased, and vice versa.*/
-    float gain = 2;
-    colorSensor.setGain(gain);
-
+    rb.init(hardwareMap);
+    colorSensor = rb.colorSensor;
   }
 
   @Override
   public void loop() {
     final float[] hsvValues = new float[3];
     //Get the actual colors
-    NormalizedRGBA colors = colorSensor.getNormalizedColors();
+    double distance = colorSensor.getDistance(DistanceUnit.INCH);
     //Convert them into HSV values, which are more useful for computer vision tasks.
-    Color.colorToHSV(colors.toColor(), hsvValues);
+    int color = colorSensor.getNormalizedColors().toColor();
+    Color.colorToHSV(color, hsvValues);
     //Add all the values to telemetry
     telemetry.addLine()
-            .addData("Red", colors.red)
-            .addData("Green", colors.green)
-            .addData("Blue", colors.blue);
+            .addData("Red", Color.red(color))
+            .addData("Green", Color.green(color))
+            .addData("Blue", Color.blue(color));
     telemetry.addLine()
-            .addData("Hue", "%.3f", hsvValues[0])
-            .addData("Saturation", "%.3f", hsvValues[1])
-            .addData("Value", "%.3f", hsvValues[2]);
-    telemetry.addData("Alpha", "%.3f", colors.alpha);
+            .addData("Hue", hsvValues[0])
+            .addData("Saturation", hsvValues[1])
+            .addData("Value", hsvValues[2]);
+    telemetry.addData("Alpha", Color.alpha(color));
+    telemetry.addData("Distance", distance);
     telemetry.update();
+    telemetry.addData("Servo position:", servoPosition);
+    telemetry.update();
+
+    if (gamepad1.a) {
+      if (!aWasDown) {
+        aWasDown = true;
+        rb.sensor_servo.setPosition(servoPosition);
+      }
+    } else {
+      aWasDown = false;
+    }
+    //Use the bumpers to change the angle. If the b button is pressed, change it slowly.
+    if (gamepad1.left_bumper) {
+      if (!leftWasDown) {
+        leftWasDown = true;
+        if (gamepad1.b) {
+          servoPosition -= .01;
+        } else {
+          servoPosition -= ServoTest.INCREMENT;
+        }
+      }
+    } else {
+      leftWasDown = false;
+    }
+    if (gamepad1.right_bumper) {
+      if (!rightWasDown) {
+        rightWasDown = true;
+        if (gamepad1.b) {
+          servoPosition += .01;
+        } else {
+          servoPosition += ServoTest.INCREMENT;
+        }
+      }
+    } else {
+      rightWasDown = false;
+    }
   }
 }

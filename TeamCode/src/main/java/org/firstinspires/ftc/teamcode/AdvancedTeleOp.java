@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
 import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
-@TeleOp(name = "Advanced TeleOp", group = "Remote")
+@TeleOp(name = "Experimental TeleOp", group = "Remote")
 public class AdvancedTeleOp extends OpMode {
     private Robot rb = new Robot(telemetry);
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -26,7 +26,7 @@ public class AdvancedTeleOp extends OpMode {
     boolean rbWasDown;
     boolean lbWasDown;
     boolean triggerWasDown;
-    //Makes a list of theea targets which will be cycled through
+    //Makes a list of the targets which will be cycled through
     Target[] targets = new Target[]{Constants.redTopGoal, Constants.redPowershot1, Constants.redPowershot2, Constants.redPowershot3};
 
     @Override
@@ -82,7 +82,7 @@ public class AdvancedTeleOp extends OpMode {
                 triggerWasDown = true;
                 //This feature is HIGHLY EXPERIMENTAL, even for this opMode. Do not comment it back in unless you know what you are doing.
 //                double angleDifference = currentPosition.getHeading() - rb.getAngleToTarget(currentPosition, currentTarget);
-//                drive.turnAsync(angleDifference);
+//                drive.turn(angleDifference);
                 rb.aimAndShoot(currentPosition, currentTarget, elapsedTime, true);
             } else {
                 rb.aimAndShoot(currentPosition, currentTarget, elapsedTime, false);

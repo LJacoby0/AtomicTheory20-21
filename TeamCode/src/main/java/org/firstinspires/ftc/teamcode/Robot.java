@@ -1,20 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.util.InterpLUT;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.IOException;
 
 class Robot {
-    //Declare motors
+    //Declare things
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
@@ -30,6 +36,7 @@ class Robot {
     Servo sensor_servo;
     Servo hopperRotate;
     Servo hopperHammer;
+    RevColorSensorV3 colorSensor;
 
     public Robot(Telemetry telemetry){
         this.telemetry = telemetry;
@@ -49,6 +56,8 @@ class Robot {
         hopperRotate = hardwareMap.get(Servo.class, "hopper_rotate");
         hopperHammer = hardwareMap.get(Servo.class, "hopper_hammer");
 
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "sensor_color");
+
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -66,10 +75,17 @@ class Robot {
         //Make the flywheel run using internal PID
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Set the gain of the color sensor, basically its sensitivity. This can be adjusted.
+        float gain = 2;
+        colorSensor.setGain(gain);
+
         //Create the calibration tables from previously created files that will be used throughout the match.
         //This means we only have to read from the files once, increasing performance (I think?)
         createCalibrationInterplut(goalLut, TargetType.GOAL);
         createCalibrationInterplut(powershotLut, TargetType.POWERSHOT);
+        sensor_servo.setPosition(Constants.COLOR_SERVO_UP);
+        hopperDown();
+        hammerIn();
     }
 
 
@@ -103,16 +119,6 @@ class Robot {
         backLeftMotor.setPower(blPower);
         backRightMotor.setPower(brPower);
     }
-    void driveStop() {
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-    }
-
-    static double startTime;
-
-
 
     /**
      * This uses calibrated values to shoot. If the robot does not have calibrated values, it defaults back
@@ -156,7 +162,30 @@ class Robot {
                 hammerIn();
             }
         }
+    }
 
+    synchronized int getRingNumber(ElapsedTime timer) throws InterruptedException {
+        timer.reset();
+        double distance = colorSensor.getDistance(DistanceUnit.CM);
+        if (distance < 26) {
+            return 4;
+        } else {
+            sensor_servo.setPosition(Constants.COLOR_SERVO_DOWN);
+            //Be very careful, this might cause problems and need to be implemented differently
+            wait(1000);
+            if (distance <= 26) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    void driveStop() {
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
     }
     void stopFlywheel(){
         flywheelMotor.setPower(0);
@@ -218,7 +247,7 @@ class Robot {
     /**
      * This gets the correct launch power for a target based off
      * an average of the two nearest files which were stored during calibration.
-     * @param pose The current pose of the robot.
+     * @param pose The current pose of the robot. Get it using [lcalizername].getPoseEstimate
      * @param target The target the robot is aiming at.
      * @return The correct power to use from a given point aiming at a specific target.
      */
