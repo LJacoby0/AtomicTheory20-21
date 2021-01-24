@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class RoadRunnerPark extends LinearOpMode {
     Robot rb = new Robot(telemetry);
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startingPose = new Pose2d(-62, 50, Math.toRadians(90));
         Trajectory newTrajectory = drive.trajectoryBuilder(startingPose)

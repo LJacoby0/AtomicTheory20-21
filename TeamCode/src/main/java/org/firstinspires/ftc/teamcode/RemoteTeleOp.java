@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 public class RemoteTeleOp extends OpMode {
     private Robot rb = new Robot(telemetry);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    static boolean isManual = false;
 
     @Override
     public void init() {
@@ -29,6 +30,7 @@ public class RemoteTeleOp extends OpMode {
         shootTarget();
         moveHopper();
         telemetry.addData("Status", "Looping");
+        telemetry.addData("Manual Mode", isManual);
         telemetry.update();
     }
 
@@ -36,7 +38,8 @@ public class RemoteTeleOp extends OpMode {
 
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
-        if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
+        //It also passes in whether or not we are in manual mode.
+        if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
                 rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
@@ -48,7 +51,7 @@ public class RemoteTeleOp extends OpMode {
             //If it's in automatic mode, the hopper needs to be told to go down while it's not pressed.
             if (!isManual){
                 rb.hopperDown();
-                rb.hopperHammer.setPosition(Constants.HAMMER_IN);
+                rb.hammerIn();
             }
         }
     }
@@ -71,7 +74,6 @@ public class RemoteTeleOp extends OpMode {
         }
 
         //had to put on different buttons because of debouncing (thought of repeated button press)
-    static boolean isManual = false;
         private void moveHopper(){
             if(gamepad1.right_bumper) {
                 isManual = true;
