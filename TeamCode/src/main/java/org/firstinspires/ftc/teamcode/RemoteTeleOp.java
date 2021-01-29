@@ -83,9 +83,9 @@ public class RemoteTeleOp extends OpMode {
 
         //had to put on different buttons because of debouncing (thought of repeated button press)
         private void moveHopper(){
-            if(gamepad1.right_bumper) {
+            if(gamepad1.dpad_down) {
                 isManual = true;
-            } else if (gamepad1.left_bumper){
+            } else if (gamepad1.dpad_up){
                 isManual = false;
             }
             if (isManual){
