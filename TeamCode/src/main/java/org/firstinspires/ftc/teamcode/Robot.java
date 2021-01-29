@@ -29,6 +29,7 @@ class Robot {
     DcMotor leftEncoder;
     DcMotor middleEncoder;
     DcMotor rightEncoder;
+    DcMotor intakeMotor;
     Telemetry telemetry;
     InterpLUT goalLut = new InterpLUT();
     InterpLUT powershotLut = new InterpLUT();
@@ -48,6 +49,7 @@ class Robot {
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
         flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         leftEncoder = hardwareMap.get(DcMotor.class, "odol");
         middleEncoder = hardwareMap.get(DcMotor.class, "odom");
         rightEncoder = hardwareMap.get(DcMotor.class, "odor");

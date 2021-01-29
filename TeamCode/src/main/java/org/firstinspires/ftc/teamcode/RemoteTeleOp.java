@@ -29,6 +29,7 @@ public class RemoteTeleOp extends OpMode {
         driveChassis();
         shootTarget();
         moveHopper();
+        runIntake();
         telemetry.addData("Status", "Looping");
         telemetry.addData("Manual Mode", isManual);
         telemetry.update();
@@ -53,6 +54,13 @@ public class RemoteTeleOp extends OpMode {
                 rb.hopperDown();
                 rb.hammerIn();
             }
+        }
+    }
+    private void runIntake(){
+        if (gamepad1.right_bumper){
+            rb.intakeMotor.setPower(1);
+        } else if (gamepad1.left_bumper){
+            rb.intakeMotor.setPower(-1);
         }
     }
         private void driveChassis () {
