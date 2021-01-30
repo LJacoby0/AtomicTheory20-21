@@ -40,7 +40,7 @@ public class RemoteTeleOp extends OpMode {
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
         //It also passes in whether or not we are in manual mode.
-        if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
+        if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
                 rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
