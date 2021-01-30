@@ -96,9 +96,9 @@ public class RemoteTeleOp extends OpMode {
                 } else if(gamepad1.y) {
                     rb.hopperUp();
                 }
-                if(gamepad1.right_bumper) {
+                if(gamepad1.a) {
                     rb.hammerIn();
-                } else if(gamepad1.left_bumper) {
+                } else if(gamepad1.b) {
                     rb.hammerOut();
                 }
             }
