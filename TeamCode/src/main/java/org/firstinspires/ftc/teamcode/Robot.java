@@ -52,7 +52,7 @@ class Robot {
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         leftEncoder = hardwareMap.get(DcMotor.class, "odol");
         middleEncoder = hardwareMap.get(DcMotor.class, "odom");
-        rightEncoder = hardwareMap.get(DcMotor.class, "odor");
+        rightEncoder = hardwareMap.get(DcMotor.class, "intake");
 
         sensor_servo = hardwareMap.get(Servo.class, "sensor_servo");
         hopperRotate = hardwareMap.get(Servo.class, "hopper_rotate");

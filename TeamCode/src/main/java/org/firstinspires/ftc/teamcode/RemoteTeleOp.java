@@ -61,6 +61,8 @@ public class RemoteTeleOp extends OpMode {
             rb.intakeMotor.setPower(1);
         } else if (gamepad1.left_bumper){
             rb.intakeMotor.setPower(-1);
+        } else {
+            rb.intakeMotor.setPower(0);
         }
     }
         private void driveChassis () {
