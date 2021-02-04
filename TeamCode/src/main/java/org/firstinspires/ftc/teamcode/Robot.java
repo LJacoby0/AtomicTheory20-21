@@ -164,23 +164,6 @@ class Robot {
         }
     }
 
-    synchronized int getRingNumber(ElapsedTime timer) throws InterruptedException {
-        timer.reset();
-        double distance = colorSensor.getDistance(DistanceUnit.CM);
-        if (distance < 26) {
-            return 4;
-        } else {
-            sensor_servo.setPosition(Constants.COLOR_SERVO_DOWN);
-            //Be very careful, this might cause problems and need to be implemented differently
-            wait(1000);
-            if (distance <= 26) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
-
     void driveStop() {
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
