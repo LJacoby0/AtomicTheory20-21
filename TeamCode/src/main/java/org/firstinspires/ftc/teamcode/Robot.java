@@ -33,7 +33,7 @@ class Robot {
     Telemetry telemetry;
     InterpLUT goalLut = new InterpLUT();
     InterpLUT powershotLut = new InterpLUT();
-    static boolean isCalibrated = true;
+    static boolean isCalibrated = false;
     Servo sensor_servo;
     Servo hopperRotate;
     Servo hopperHammer;

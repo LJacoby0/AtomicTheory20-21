@@ -71,9 +71,9 @@ public abstract class AdvancedTeleOp extends OpMode {
             lbWasDown = false;
         }
         //Makes the target list wrap around.
-        if (targetInt<0){
-            targetInt = targets.length-1;
-        } else if (targetInt>targets.length-1){
+        if (targetInt < 0){
+            targetInt = targets.length - 1;
+        } else if (targetInt>targets.length - 1){
             targetInt = 0;
         }
         Target currentTarget = targets[targetInt];
