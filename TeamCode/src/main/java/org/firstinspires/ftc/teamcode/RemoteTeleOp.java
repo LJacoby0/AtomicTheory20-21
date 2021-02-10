@@ -4,12 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
-import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
-import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.Constants.*;
 
-@TeleOp(name = "Remote TeleOp", group = "Remote")
+@TeleOp(name = "One Player TeleOp", group = "Remote")
 public class RemoteTeleOp extends OpMode {
     private Robot rb = new Robot(telemetry);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -30,6 +27,7 @@ public class RemoteTeleOp extends OpMode {
         shootTarget();
         moveHopper();
         runIntake();
+//        moveWobble();
         telemetry.addData("Status", "Looping");
         telemetry.addData("Manual Mode", isManual);
         telemetry.update();
@@ -37,15 +35,23 @@ public class RemoteTeleOp extends OpMode {
 
     static boolean triggerWasDown;
 
+//    private void moveWobble(){
+//        if (gamepad1.a){
+//            rb.wobbleGoalUp();
+//        }
+//        if(gamepad1.b){
+//            rb.wobbleGoalDown();
+//        }
+//    }
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
         //It also passes in whether or not we are in manual mode.
         if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
-                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
+                rb.shoot(FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
             }
-                rb.shoot(Constants.FLYWHEEL_CONSTANT, elapsedTime, false, isManual);
+                rb.shoot(FLYWHEEL_CONSTANT, elapsedTime, false, isManual);
         } else {
             triggerWasDown = false;
             rb.stopFlywheel();

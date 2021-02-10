@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -19,13 +21,16 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.IOException;
 
+import static org.firstinspires.ftc.teamcode.Constants.WOBBLE_GOAL_DOWN;
+import static org.firstinspires.ftc.teamcode.Constants.WOBBLE_GOAL_UP;
+
 class Robot {
     //Declare things
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
-    DcMotor flywheelMotor;
+    DcMotorEx flywheelMotor;
     DcMotor leftEncoder;
     DcMotor middleEncoder;
     DcMotor rightEncoder;
@@ -37,6 +42,7 @@ class Robot {
     Servo sensor_servo;
     Servo hopperRotate;
     Servo hopperHammer;
+//    Servo wobbleServo;
     RevColorSensorV3 colorSensor;
 
     public Robot(Telemetry telemetry){
@@ -48,7 +54,7 @@ class Robot {
         frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
-        flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel");
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel");
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         leftEncoder = hardwareMap.get(DcMotor.class, "odol");
         middleEncoder = hardwareMap.get(DcMotor.class, "odom");
@@ -57,6 +63,7 @@ class Robot {
         sensor_servo = hardwareMap.get(Servo.class, "sensor_servo");
         hopperRotate = hardwareMap.get(Servo.class, "hopper_rotate");
         hopperHammer = hardwareMap.get(Servo.class, "hopper_hammer");
+//        wobbleServo = hardwareMap.get(Servo.class, "wobble");
 
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "sensor_color");
 
@@ -66,6 +73,8 @@ class Robot {
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
         flywheelMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftEncoder.setDirection(DcMotor.Direction.REVERSE);
+        middleEncoder.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to brake when power is zero
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -74,8 +83,15 @@ class Robot {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Make the flywheel run using internal PID
-        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Reset the encoders
+        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        middleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        middleEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         //Set the gain of the color sensor, basically its sensitivity. This can be adjusted.
         float gain = 2;
@@ -163,6 +179,12 @@ class Robot {
             }
         }
     }
+//    void wobbleGoalUp(){
+//        wobbleServo.setPosition(WOBBLE_GOAL_UP);
+//    }
+//    void wobbleGoalDown(){
+//        wobbleServo.setPosition(WOBBLE_GOAL_DOWN);
+//    }
 
     void driveStop() {
         frontLeftMotor.setPower(0);

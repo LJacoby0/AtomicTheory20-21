@@ -43,6 +43,9 @@ class Constants {
     public static final double HOPPER_DOWN = .915;
     public static final double COLOR_SERVO_DOWN = .17;
     public static final double COLOR_SERVO_UP = .11;
+    public static final double WOBBLE_GOAL_UP = .17;
+    public static final double WOBBLE_GOAL_DOWN = .11;
+
 
 
 
