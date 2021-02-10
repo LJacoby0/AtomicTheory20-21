@@ -24,16 +24,15 @@ public class FlywheelPIDTuner extends LinearOpMode {
     static double TARGET_VELOCITY = TICKS_PER_ROTATION * ROTATIONS_PER_SEC;
     double velocity = rb.flywheelMotor.getVelocity();
     double lastKp = PID.p;
-    double lastKi = MOTOR_VELO_PID.i;
-    double lastKd = MOTOR_VELO_PID.d;
-    double lastKf = MOTOR_VELO_PID.f;
+    double lastKi = PID.i;
+    double lastKd = PID.d;
+    double lastKf = PID.f;
 
     static PIDFCoefficients PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(TARGET_VELOCITY));
     @Override
     public void runOpMode() throws InterruptedException {
-
-
+        rb.flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
 
