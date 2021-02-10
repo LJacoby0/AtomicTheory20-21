@@ -15,6 +15,8 @@ public class OdometryHardwareTest extends OpMode {
     public void loop() {
         telemetry.addData("Left Encoder Value", rb.leftEncoder.getCurrentPosition());
         telemetry.addData("Horizontal Encoder Value", rb.middleEncoder.getCurrentPosition());
+        telemetry.addData("Right Encoder Value", rb.rightEncoder.getCurrentPosition());
+
         telemetry.update();
 
     }

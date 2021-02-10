@@ -155,7 +155,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                     );
                     break;
             }
-
+            //If any of the PID variables have been changed, update the motor PID
             if (lastKp != MOTOR_VELO_PID.p || lastKd != MOTOR_VELO_PID.d
                     || lastKi != MOTOR_VELO_PID.i || lastKf != MOTOR_VELO_PID.f) {
                 drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
