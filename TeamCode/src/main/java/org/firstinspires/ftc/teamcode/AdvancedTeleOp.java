@@ -2,11 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 
 import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
@@ -86,9 +84,9 @@ public abstract class AdvancedTeleOp extends OpMode {
                 //This feature is HIGHLY EXPERIMENTAL, even for this opMode. Do not comment it back in unless you know what you are doing.
 //                double angleDifference = currentPosition.getHeading() - rb.getAngleToTarget(currentPosition, currentTarget);
 //                drive.turn(angleDifference);
-                rb.aimAndShoot(currentPosition, currentTarget, elapsedTime, true);
+                rb.getPowerAndShoot(currentPosition, currentTarget, elapsedTime, true, false);
             } else {
-                rb.aimAndShoot(currentPosition, currentTarget, elapsedTime, false);
+                rb.getPowerAndShoot(currentPosition, currentTarget, elapsedTime, false, false);
             }
         } else {
             triggerWasDown = false;

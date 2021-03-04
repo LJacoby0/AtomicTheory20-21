@@ -16,7 +16,7 @@ public class FlywheelPIDTuner extends LinearOpMode {
     private Robot rb = new Robot(telemetry);
     private FtcDashboard dashboard = FtcDashboard.getInstance();
     NanoClock clock = NanoClock.system();
-    private static double EFFICIENCY = .85;
+    private static double EFFICIENCY = 1;
     static final double TICKS_PER_ROTATION = 28;
     static final double MAX_RPM = 6000;
     static double REAL_RPM = MAX_RPM*EFFICIENCY;
@@ -41,8 +41,8 @@ public class FlywheelPIDTuner extends LinearOpMode {
             if (gamepad1.a){
                 rb.flywheelMotor.setVelocity(TARGET_VELOCITY);
             }
-            telemetry.addData("targetVelocity", TARGET_VELOCITY);
-            telemetry.addData("measuredVelocity", velocity);
+            telemetry.addData("Target Velocity", TARGET_VELOCITY);
+            telemetry.addData("Measured Velocity", velocity);
             telemetry.addData("error", TARGET_VELOCITY - velocity);
             if (lastKp != PID.p || lastKd != PID.d
                     || lastKi != PID.i || lastKf != PID.f) {

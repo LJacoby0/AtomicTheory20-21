@@ -39,8 +39,8 @@ class Constants {
     public static final int HOPPER_SERVO_ROTATION_TIME_MILLISECONDS = 350;
     public static final double HAMMER_OUT = .67;
     public static final double HAMMER_IN = .95;
-    public static final double HOPPER_UP = .785;
-    public static final double HOPPER_DOWN = .915;
+    public static final double HOPPER_UP = .77;
+    public static final double HOPPER_DOWN = .96;
     public static final double COLOR_SERVO_DOWN = .17;
     public static final double COLOR_SERVO_UP = .11;
     public static final double WOBBLE_GOAL_UP = .17;

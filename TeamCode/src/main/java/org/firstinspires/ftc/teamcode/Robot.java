@@ -147,18 +147,18 @@ class Robot {
      * @param timer An ElapsedTime object initialized in milliseconds.
      * @param isFirst Whether or not this is the first time this is being called.
      */
-    void aimAndShoot(Pose2d pose, Target target, ElapsedTime timer, boolean isFirst){
+    void getPowerAndShoot(Pose2d pose, Target target, ElapsedTime timer, boolean isFirst, boolean isManual){
         double power;
         if (isCalibrated){
             power = getLaunchPower(pose, target);
         } else {
             power = Constants.FLYWHEEL_CONSTANT;
         }
-        shoot(power, timer, isFirst, false);
+        shoot(power, timer, isFirst, isManual);
     }
 
     /** This is the basic shoot command. It only shoots, and is used directly only in calibration,
-     * though it can be called indirectly in aimAndShoot. It shouldn't be used directly in most opModes, use AimAndShoot instead.
+     * though it can be called indirectly in getPowerAndShoot. It shouldn't be used directly in most opModes, use AimAndShoot instead.
      * @param power The power to shoot with, from 0 to 1.
      * @param timer An ElapsedTime object initialized in milliseconds.
      * @param isFirst Whether or not this is the first time this is being called.
@@ -172,7 +172,7 @@ class Robot {
         flywheelMotor.setPower(power);
         //This weird-ass piece of code is meant to reload the robot as fast as possible by alternating after a constant amount of milliseconds which should be tuned
         if (!isManual){
-            if (timeSinceStart % Constants.DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS> Constants.HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart > Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
+            if (timeSinceStart % Constants.DOUBLE_HAMMER_SERVO_ROTATION_TIME_MILLISECONDS > Constants.HAMMER_SERVO_ROTATION_TIME &&  timeSinceStart > Constants.HOPPER_SERVO_ROTATION_TIME_MILLISECONDS){
                 hammerOut();
             } else {
                 hammerIn();
@@ -285,5 +285,9 @@ class Robot {
                 isCalibrated = false;
             }
         }
+    }
+
+    public void shoot(Pose2d pose, Target target) {
+        flywheelMotor.setPower(getLaunchPower(pose, target));
     }
 }
