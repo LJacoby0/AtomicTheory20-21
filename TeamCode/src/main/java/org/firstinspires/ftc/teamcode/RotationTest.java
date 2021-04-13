@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "RotationTest", group = "Remote")
+@TeleOp(name = "Hopper Test", group = "Remote")
 public class RotationTest extends ServoTest{
     @Override
     public String getServoName() {

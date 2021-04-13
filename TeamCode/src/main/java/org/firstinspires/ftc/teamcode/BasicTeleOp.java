@@ -4,14 +4,19 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.Constants.*;
+import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER;
+import static org.firstinspires.ftc.teamcode.Constants.DRIVE_POWER_SLOW;
+import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.Constants.FLYWHEEL_MAX_VELO;
+import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.Constants.WOBBLE_GOAL_DOWN;
+import static org.firstinspires.ftc.teamcode.Constants.WOBBLE_GOAL_UP;
 
-@TeleOp(name = "Two Player TeleOp", group = "Remote")
-public class MultiplayerTeleOp extends OpMode {
-    private Robot rb = new Robot(telemetry);
+@TeleOp(name = "Basic", group = "Remote")
+public class BasicTeleOp extends OpMode {
+    private BasicRobot rb = new BasicRobot(telemetry);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    static boolean isManual = false;
-
+    boolean bWasDown;
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
@@ -27,32 +32,56 @@ public class MultiplayerTeleOp extends OpMode {
         shootTarget();
         moveHopper();
         runIntake();
+        moveWobble();
         telemetry.addData("Status", "Looping");
-        telemetry.addData("Manual Mode", isManual);
         telemetry.update();
     }
 
     static boolean triggerWasDown;
 
+//    private void moveWobble(){
+//        if (gamepad1.a){
+//            rb.wobbleGoalUp();
+//        }
+//        if(gamepad1.b){
+//            rb.wobbleGoalDown();
+//        }
+//    }
+
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
         //It also passes in whether or not we are in manual mode.
-        if (gamepad2.right_trigger > TRIGGER_THRESHOLD) {
+        if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
                 rb.shoot(FLYWHEEL_MAX_VELO, elapsedTime, true);
             }
                 rb.shoot(FLYWHEEL_MAX_VELO, elapsedTime, false);
         } else {
+            if (triggerWasDown){
+//                rb.hopperDown();
+//                 rb.hammerIn();
+            }
             triggerWasDown = false;
             rb.stopFlywheel();
-            //If it's in automatic mode, the hopper needs to be told to go down while it's not pressed.
-            if (!isManual){
-                rb.hopperDown();
-                rb.hammerIn();
-            }
         }
     }
+    private void moveWobble(){
+        if (gamepad1.b){
+            if (!bWasDown){
+                bWasDown = true;
+                int currentPosition = rb.wobbleMotor.getCurrentPosition();
+                if (Math.abs(currentPosition - WOBBLE_GOAL_UP) > Math.abs(currentPosition - WOBBLE_GOAL_DOWN)){
+                    rb.wobbleGoalUp();
+                } else {
+                    rb.wobbleGoalDown();
+                }
+            }
+        } else {
+            bWasDown = false;
+        }
+    }
+
     private void runIntake(){
         if (gamepad1.right_bumper){
             rb.intakeMotor.setPower(1);
@@ -82,22 +111,15 @@ public class MultiplayerTeleOp extends OpMode {
 
         //had to put on different buttons because of debouncing (thought of repeated button press)
         private void moveHopper(){
-            if(gamepad2.dpad_down) {
-                isManual = true;
-            } else if (gamepad2.dpad_up){
-                isManual = false;
+            if(gamepad1.x) {
+                rb.hopperDown();
+            } else if(gamepad1.y) {
+                rb.hopperUp();
             }
-            if (isManual){
-                if(gamepad2.x) {
-                    rb.hopperDown();
-                } else if(gamepad2.y) {
-                    rb.hopperUp();
-                }
-                if(gamepad2.a) {
-                    rb.hammerIn();
-                } else if(gamepad2.b) {
-                    rb.hammerPush();
-                }
+            if(gamepad1.a){
+                rb.hammerOut();
+            } else if (gamepad1.b){
+                rb.hammerIn();
             }
         }
     }

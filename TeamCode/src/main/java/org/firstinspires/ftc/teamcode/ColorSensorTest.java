@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,39 +12,38 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class ColorSensorTest extends LinearOpMode {
     private Robot rb = new Robot(telemetry);
     int ringNumber;
-    double distance1;
-    double distance2;
-    double distance3;
+    double hue1;
+    double hue2;
+    final float[] hsvValues = new float[3];
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     @Override
     public void runOpMode() throws InterruptedException {
         rb.init(hardwareMap);
         waitForStart();
         timer.reset();
-        double distance = rb.colorSensor.getDistance(DistanceUnit.CM);
-        if (distance < 26) {
+        int color = rb.colorSensor.getNormalizedColors().toColor();
+        Color.colorToHSV(color, hsvValues);
+        if (hsvValues[0] > 24) {
             ringNumber = 4;
-            distance1 = distance;
+
+            hue1 = hsvValues[0];
         } else {
             rb.sensor_servo.setPosition(Constants.COLOR_SERVO_DOWN);
-            //Be very careful, this might cause problems and need to be implemented differently
-            timer.reset();
-            if (timer.time()>1000){
-                if (distance <= 26) {
+            Thread.sleep(1000);
+            color = rb.colorSensor.getNormalizedColors().toColor();
+            Color.colorToHSV(color, hsvValues);
+                if (hsvValues[0] > 24) {
                     ringNumber = 1;
-                    distance2 = distance;
+                    hue2 = hsvValues[0];
                 } else {
                     ringNumber = 0;
-                    distance3 = distance;
                 }
             }
-        }
         while (opModeIsActive() && !isStopRequested()){
             telemetry.addData("Number of Rings", ringNumber);
-            telemetry.addData("Distance 1", distance1);
-            telemetry.addData("Distance 2", distance2);
-            telemetry.addData("Distance 3", distance3);
-            telemetry.addData("Current Distance", distance);
+            telemetry.addData("Distance 1", hue1);
+            telemetry.addData("Distance 2", hue2);
+            telemetry.addData("Current Distance", rb.colorSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
     }

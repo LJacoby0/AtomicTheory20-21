@@ -45,7 +45,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp(name = "At Color", group = "Sensor")
 public class SensorColor extends OpMode {
   /** The colorSensor field will contain a reference to our color sensor hardware object */
-  RevColorSensorV3 colorSensor;
+  ColorRangeSensor colorSensor;
   Robot rb = new Robot(telemetry);
   boolean leftWasDown = false;
   boolean rightWasDown = false;

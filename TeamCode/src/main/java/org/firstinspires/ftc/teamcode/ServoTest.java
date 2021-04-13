@@ -62,11 +62,5 @@ public abstract class ServoTest extends OpMode {
         } else {
             rightWasDown = false;
         }
-        telemetry.clear();
-        telemetry.addData("Done!", "Press A to finish.");
-        telemetry.update();
-        if (gamepad1.a) {
-            stop();
-        }
     }
 }

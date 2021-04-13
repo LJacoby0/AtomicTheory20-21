@@ -15,14 +15,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import static org.firstinspires.ftc.teamcode.Constants.*;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-@Autonomous(name = "Blue No Ring", group = "Remote")
-public class BlueSuperAuto extends LinearOpMode {
+import static org.firstinspires.ftc.teamcode.Constants.HAMMER_SERVO_ROTATION_TIME;
+
+@Autonomous(name = "Blue One Ring", group = "Remote")
+public class BlueOneRing extends LinearOpMode {
     Robot rb = new Robot(telemetry);
     static ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     int ringNumber;
@@ -183,7 +183,7 @@ public class BlueSuperAuto extends LinearOpMode {
             }
             //Use this to run a certain auto
 
-        ringNumber = 0;
+        ringNumber = 1;
             drive.followTrajectory(trajectory4);
 //            angleDifference = drive.getPoseEstimate().getHeading() - rb.getAngleToTarget(drive.getPoseEstimate(), bluePowershot3);
 //            if (Math.abs(angleDifference) > ANGLE_TOLERANCE) {
@@ -286,7 +286,7 @@ public class BlueSuperAuto extends LinearOpMode {
     private void shoot(double power, @NotNull ElapsedTime timer) throws InterruptedException {
         timer.reset();
         while (!rb.shootRing(timer, power));
-        rb.hammerIn();
         Thread.sleep(HAMMER_SERVO_ROTATION_TIME);
+        rb.hammerIn();
     }
 }

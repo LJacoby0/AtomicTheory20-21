@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
-
+@Disabled
 @TeleOp(name = "One Player TeleOp", group = "Remote")
 public class RemoteTeleOp extends OpMode {
     private Robot rb = new Robot(telemetry);
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    static boolean isManual = false;
 
     @Override
     public void init() {
@@ -29,7 +29,6 @@ public class RemoteTeleOp extends OpMode {
         runIntake();
 //        moveWobble();
         telemetry.addData("Status", "Looping");
-        telemetry.addData("Manual Mode", isManual);
         telemetry.update();
     }
 
@@ -43,23 +42,23 @@ public class RemoteTeleOp extends OpMode {
 //            rb.wobbleGoalDown();
 //        }
 //    }
+
     private void shootTarget() {
         //This tells the command whether or not it's the first time the button has been pressed.
         //It also passes in whether or not we are in manual mode.
         if (gamepad1.right_trigger > TRIGGER_THRESHOLD) {
             if (!triggerWasDown) {
                 triggerWasDown = true;
-                rb.shoot(FLYWHEEL_CONSTANT, elapsedTime, true, isManual);
+                rb.shoot(FLYWHEEL_MAX_VELO, elapsedTime, true);
             }
-                rb.shoot(FLYWHEEL_CONSTANT, elapsedTime, false, isManual);
+                rb.shoot(FLYWHEEL_MAX_VELO, elapsedTime, false);
         } else {
-            triggerWasDown = false;
-            rb.stopFlywheel();
-            //If it's in automatic mode, the hopper needs to be told to go down while it's not pressed.
-            if (!isManual){
+            if (triggerWasDown){
                 rb.hopperDown();
                 rb.hammerIn();
             }
+            triggerWasDown = false;
+            rb.stopFlywheel();
         }
     }
     private void runIntake(){
@@ -91,22 +90,15 @@ public class RemoteTeleOp extends OpMode {
 
         //had to put on different buttons because of debouncing (thought of repeated button press)
         private void moveHopper(){
-            if(gamepad1.dpad_down) {
-                isManual = true;
-            } else if (gamepad1.dpad_up){
-                isManual = false;
+            if(gamepad1.x) {
+                rb.hopperDown();
+            } else if(gamepad1.y) {
+                rb.hopperUp();
             }
-            if (isManual){
-                if(gamepad1.x) {
-                    rb.hopperDown();
-                } else if(gamepad1.y) {
-                    rb.hopperUp();
-                }
-                if(gamepad1.a) {
-                    rb.hammerIn();
-                } else if(gamepad1.b) {
-                    rb.hammerOut();
-                }
+            if(gamepad1.a){
+                rb.hammerPush();
+            } else if (gamepad1.b){
+                rb.hammerIn();
             }
         }
     }
