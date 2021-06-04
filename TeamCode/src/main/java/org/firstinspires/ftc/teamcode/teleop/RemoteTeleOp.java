@@ -26,8 +26,8 @@ public abstract class RemoteTeleOp extends OpMode {
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     SampleMecanumDrive drive;
     OpenCvCamera webcam;
-    UGAdvancedHighGoalPipeline pipeline = new UGAdvancedHighGoalPipeline(78, 10);
-    double currentTurretDegrees = 30;
+    UGAdvancedHighGoalPipeline pipeline = new UGAdvancedHighGoalPipeline(105, 10);
+//    double currentTurretDegrees = 30;
     public enum ShootState {
         SHOOTING,
         WINDUP,
@@ -137,7 +137,6 @@ public abstract class RemoteTeleOp extends OpMode {
             //Then goes to SHOOTING. However, it goes back to IDLE, cancelling the operation,
             //if x is pressed. 40 is the current tolerance, it might need to be bigger.
             case WINDUP:
-
                 rb.hopperUp();
                 if (Math.abs(rb.flywheelMotor.getVelocity() - targetVelocity) < 60){
                     shootStartTime = elapsedTime.time();
@@ -174,22 +173,24 @@ public abstract class RemoteTeleOp extends OpMode {
     }
     private void aimAtTarget(){
         double degreesToTarget = pipeline.calculateYaw(getColor());
+        drive.turnAsync(Math.toRadians(degreesToTarget));
+        driveState = DriveState.AUTOMATIC;
         //This solves the simultaneous equation: maxRobotAngVelocity*degreesRobotMoves = maxTurretAngVelocity*degreesTurretMoves
         //and degreesTurretMoves+degreesRobotMoves = degreesToTarget
 
-        double[] movements = solveSimultaneousEquations(DriveConstants.MAX_ANG_VEL_DEG, -TURRET_ROTATION_SPEED, 1, 1, 0 , degreesToTarget);
-        double robotRotationDegrees = movements[0];
-        double turretRotationDegrees = movements[1];
-        double impossibleTurretDegrees = 0;
-        if (currentTurretDegrees + turretRotationDegrees > TURRET_MAX_ROTATiON_DEGREES){
-            impossibleTurretDegrees = currentTurretDegrees + turretRotationDegrees - TURRET_MAX_ROTATiON_DEGREES;
-        } else if (currentTurretDegrees - turretRotationDegrees < TURRET_MIN_ROTATiON_DEGREES){
-            impossibleTurretDegrees =  currentTurretDegrees - turretRotationDegrees + TURRET_MIN_ROTATiON_DEGREES;
-        }
-        turretRotationDegrees -= impossibleTurretDegrees;
-        robotRotationDegrees += impossibleTurretDegrees;
-        drive.turnAsync(Math.toRadians(robotRotationDegrees));
-        rb.rotateTurretDegrees(turretRotationDegrees);
+//        double[] movements = solveSimultaneousEquations(DriveConstants.MAX_ANG_VEL_DEG, -TURRET_ROTATION_SPEED, 1, 1, 0 , degreesToTarget);
+//        double robotRotationDegrees = movements[0];
+//        double turretRotationDegrees = movements[1];
+//        double impossibleTurretDegrees = 0;
+//        if (currentTurretDegrees + turretRotationDegrees > TURRET_MAX_ROTATiON_DEGREES){
+//            impossibleTurretDegrees = currentTurretDegrees + turretRotationDegrees - TURRET_MAX_ROTATiON_DEGREES;
+//        } else if (currentTurretDegrees - turretRotationDegrees < TURRET_MIN_ROTATiON_DEGREES){
+//            impossibleTurretDegrees =  currentTurretDegrees - turretRotationDegrees + TURRET_MIN_ROTATiON_DEGREES;
+//        }
+//        turretRotationDegrees -= impossibleTurretDegrees;
+//        robotRotationDegrees += impossibleTurretDegrees;
+//        drive.turnAsync(Math.toRadians(robotRotationDegrees));
+//        rb.rotateTurretDegrees(turretRotationDegrees);
     }
 
     private void driveChassis () {
